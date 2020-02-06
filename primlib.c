@@ -133,7 +133,12 @@ int gfx_init() {
     exit(3);
   } else {
     // Create renderer for window
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_SOFTWARE);
+
+    if (renderer == NULL) {
+      renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_ACCELERATED);
+    }
+
     if (renderer == NULL) {
       printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
       exit(3);
