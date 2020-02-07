@@ -47,7 +47,6 @@ void gfx_filledTriangle(int x1, int y1, int x2, int y2, int x3, int y3, enum col
                 255);
 }
 
-
 void gfx_rect(int x1, int y1, int x2, int y2, enum color c) {
   assert(c < COLOR_MAX);
   rectangleRGBA(renderer, x1, y1, x2, y2, colors[c].r, colors[c].g, colors[c].b,
@@ -113,6 +112,13 @@ int gfx_isKeyDown(int key) {
   const Uint8 *keytable;
   int numkeys;
   SDL_PumpEvents();
+  SDL_Event event;
+  if(SDL_PollEvent(&event)) {
+    switch (event.type) {
+    case SDL_QUIT:
+      exit(3);
+    }
+  }
   keytable = SDL_GetKeyboardState(&numkeys);
   SDL_Scancode code = SDL_GetScancodeFromKey(key);
   assert(code < numkeys);
