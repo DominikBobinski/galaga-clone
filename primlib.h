@@ -8,6 +8,7 @@ enum color { BLACK, RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW, WHITE, COLOR_MAX };
 void gfx_pixel(int x, int y, enum color c);
 void gfx_line(int x1, int y1, int x2, int y2, enum color c);
 void gfx_circle(int x, int y, int r, enum color c);
+void gfx_filledTriangle(int x1, int y1, int x2, int y2, int x3, int y3, enum color c);
 void gfx_filledRect(int x1, int y1, int x2, int y2, enum color c);
 void gfx_filledCircle(int x, int y, int r, enum color c);
 void gfx_rect(int x1, int y1, int x2, int y2, enum color c);

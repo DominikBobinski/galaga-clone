@@ -39,6 +39,15 @@ void gfx_line(int x1, int y1, int x2, int y2, enum color c) {
            255);
 }
 
+void gfx_filledTriangle(int x1, int y1, int x2, int y2, int x3, int y3, enum color c) {
+  assert(c < COLOR_MAX);
+  Sint16 xtab[] = {x1, x2, x3};
+  Sint16 ytab[] = {y1, y2, y3};
+  filledPolygonRGBA(renderer, xtab, ytab, 3, colors[c].r, colors[c].g, colors[c].b,
+                255);
+}
+
+
 void gfx_rect(int x1, int y1, int x2, int y2, enum color c) {
   assert(c < COLOR_MAX);
   rectangleRGBA(renderer, x1, y1, x2, y2, colors[c].r, colors[c].g, colors[c].b,
