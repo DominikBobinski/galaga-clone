@@ -26,8 +26,8 @@ static struct RGB colors[COLOR_MAX] = {
     {0, 255, 255}, {255, 0, 255}, {255, 255, 0}, {255, 255, 255}};
 
 // Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1200;
+const int SCREEN_HEIGHT = 700;
 
 void gfx_pixel(int x, int y, enum color c) {
   pixelRGBA(renderer, x, y, colors[c].r, colors[c].g, colors[c].b, 255);
@@ -113,7 +113,7 @@ int gfx_isKeyDown(int key) {
   int numkeys;
   SDL_PumpEvents();
   SDL_Event event;
-  if(SDL_PollEvent(&event)) {
+  while(SDL_PollEvent(&event)) {
     switch (event.type) {
     case SDL_QUIT:
       exit(3);
