@@ -1,8 +1,7 @@
 #include "primlib.h"
 #include <stdlib.h>
-#include <unistd.h>
 
-int main(int argc, char *argv[]) {
+int main() {
   if (gfx_init())
     exit(3);
   /* clear screen */

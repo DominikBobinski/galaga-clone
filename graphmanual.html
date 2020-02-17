@@ -1,0 +1,1568 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE>SDLKey</TITLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" LINK="#0000ee" VLINK="#551a8b" BGCOLOR="#fff8dc" DIR="LTR">
+<H1>Simple graphics library</H1>
+<P>The library contains wrappers around basic primitives from the
+SDL_gfx library. It is intended to provide basic graphics
+capabilities to the beginners learning C. It is expected, that after
+getting enough proficiency in C, the programmer will use SDL library
+directly. The library is contained in the file <I>primlib.c</I>.
+Every file using it should include <I>primlib.h</I>. The library
+requires <A HREF="http://www.libsdl.org/">SDL 1.2</A> and <A HREF="http://www.ferzkopp.net/%7Easchiffler/Software/SDL_gfx-2.0/">SDL_gfx</A>
+and can be downloaded <A HREF="primlib.tgz">here</A></P>
+<H1>The coordinate system</H1>
+<P>The coordinate system origin is located at upper-left corner of a
+graphics window. Width and height of the graphics window can be
+queried using the screenWidth() and screenHeight() functions,
+respectively. Before using any of the graphics functions initgraph()
+must be called. After the drawing operations, to make the updates to
+the screen visible, call updateScreen(). Before calling
+updateScreen() once again, you must clear the screen and redraw the
+entire scene.</P>
+<H1>Compilation</H1>
+<P>The following command line can be used to compile programs using
+the library:</P>
+<PRE STYLE="margin-bottom: 0.2in">gcc -D_REENTRANT progname.c primlib.c -o progname -lm -lSDL -lpthread -lSDL_gfx</PRE><P>
+where <I>progname.c</I> is the name of the main program module.</P>
+<H1>Function reference</H1>
+<H2 CLASS="western">int gfx_init();</H2>
+<P>Must be called before any graphic operation. Returns <I>0</I> on
+success, non-zero on failure.</P>
+<H2 CLASS="western">enum color {BLACK, RED, GREEN, BLUE, CYAN,
+MAGENTA, YELLOW, WHITE, COLOR_MAX};</H2>
+<P>Enumeration type, representing available colors.</P>
+<H2 CLASS="western">void gfx_pixel(int x, int y, enum color c);</H2>
+<P>Put pixel with color <I>c</I> at coordinates <I>(x,y)</I>.</P>
+<H2 CLASS="western">void gfx_line(int x1, int y1, int x2, int y2, enum
+color c);</H2>
+<P>Draw line from <I>(x1,y1)</I> to <I>(x2,y2)</I>, using color <I>c</I>.</P>
+<H2 CLASS="western">void gfx_rect(int x1, int y1, int x2, int y2, enum
+color c);</H2>
+<P>Draw rectangle with upper left corner at <I>(x1,y1)</I> and lower
+right corner at <I>(x2,y2)</I>, using color <I>c</I>.</P>
+<H2 CLASS="western">void gfx_filledRect(int x1, int y1, int x2, int y2,
+enum color c);</H2>
+<P>Draw filled rectangle with upper left corner at <I>(x1,y1)</I> and
+lower right corner at <I>(x2,y2)</I>, using color <I>c</I>.</P>
+<H2 CLASS="western">void gfx_filledTriangle(int x1, int y1, int x2, int y2, int x3, int y3,
+enum color c);</H2>
+<P>Draw filled triangle with vertex coordinates <I>(x1,y1)</I>,  <I>(x2,y2)</I> and <I>(x3,y3)</I>, using color <I>c</I>.</P>
+<H2 CLASS="western">void gfx_circle(int x, int y, int r, enum color c);</H2>
+<P>Draw circle with a center at <I>(x,y)</I> and radius <I>r</I>,
+using color <I>c</I>.</P>
+<H2 CLASS="western">void gfx_filledCircle(int x, int y, int r, enum color
+c);</H2>
+<P>Draw filled circle with a center at <I>(x,y)</I> and radius r,
+using color c.</P>
+<H2 CLASS="western">void gfx_textout(int x, int y, char *s, enum color
+c);</H2>
+<P>Print text <I>s</I> starting at the coordinates <I>(x,y)</I>,
+using color <I>c</I>.</P>
+<H2 CLASS="western">int gfx_screenWidth();</H2>
+<P>Get the width of the screen.</P>
+<H2 CLASS="western">int gfx_screenHeight();</H2>
+<P>Get the height of the screen.</P>
+<H2 CLASS="western">void gfx_updateScreen();</H2>
+<P>Makes the result of drawing functions since the last update
+visible on the screen.</P>
+<H2 CLASS="western">int gfx_pollkey();</H2>
+<P>Return the code of pressed key, do not wait for the keypress.
+Return-1 if no key has been pressed.</P>
+<H2 CLASS="western">int gfx_getkey();</H2>
+<P>Wait for the keypress and return the key code.</P>
+<H2 CLASS="western">int gfx_isKeyDown(int key);</H2>
+<P>Return 1, if the <I>key</I> key is pressed, 0 otherwise.</P>
+<H1>List of keycodes used by keyboard functions</H1>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<TABLE WIDTH=528 BORDER=1 CELLPADDING=2 CELLSPACING=3 STYLE="page-break-before: always">
+	<COL WIDTH=168>
+	<COL WIDTH=169>
+	<COL WIDTH=165>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=168>
+				<P ALIGN=LEFT>Keycode</P>
+			</TH>
+			<TH WIDTH=169>
+				<P ALIGN=LEFT>ASCII value</P>
+			</TH>
+			<TH WIDTH=165>
+				<P ALIGN=LEFT>Common name</P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_BACKSPACE</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'\b'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>backspace</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_TAB</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'\t'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>tab</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_CLEAR</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>clear</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_RETURN</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'\r'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>return</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_PAUSE</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>pause</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_ESCAPE</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'^['</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>escape</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_SPACE</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>' '</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>space</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_EXCLAIM</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'!'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>exclaim</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_QUOTEDBL</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'&quot;'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>quotedbl</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_HASH</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'#'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>hash</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_DOLLAR</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'$'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>dollar</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_AMPERSAND</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'&amp;'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>ampersand</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_QUOTE</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'''</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>quote</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_LEFTPAREN</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'('</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>left parenthesis</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_RIGHTPAREN</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>')'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>right parenthesis</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_ASTERISK</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'*'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>asterisk</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_PLUS</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'+'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>plus sign</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_COMMA</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>','</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>comma</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_MINUS</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'-'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>minus sign</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_PERIOD</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'.'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>period</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_SLASH</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'/'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>forward slash</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_0</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'0'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>0</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_1</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'1'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>1</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_2</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'2'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>2</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_3</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'3'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>3</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_4</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'4'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>4</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_5</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'5'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>5</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_6</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'6'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>6</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_7</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'7'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>7</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_8</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'8'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>8</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_9</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'9'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>9</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_COLON</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>':'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>colon</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_SEMICOLON</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>';'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>semicolon</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_LESS</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'&lt;'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>less-than sign</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_EQUALS</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'='</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>equals sign</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_GREATER</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'&gt;'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>greater-than sign</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_QUESTION</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'?'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>question mark</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_AT</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'@'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>at</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_LEFTBRACKET</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'['</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>left bracket</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_BACKSLASH</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'\'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>backslash</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_RIGHTBRACKET</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>']'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>right bracket</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_CARET</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'^'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>caret</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_UNDERSCORE</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'_'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>underscore</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_BACKQUOTE</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'`'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>grave</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_a</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'a'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>a</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_b</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'b'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>b</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_c</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'c'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>c</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_d</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'d'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>d</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_e</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'e'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>e</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_f</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'f'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>f</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_g</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'g'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>g</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_h</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'h'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>h</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_i</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'i'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>i</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_j</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'j'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>j</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_k</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'k'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>k</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_l</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'l'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>l</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_m</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'m'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>m</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_n</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'n'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>n</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_o</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'o'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>o</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_p</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'p'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>p</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_q</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'q'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>q</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_r</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'r'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>r</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_s</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'s'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>s</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_t</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'t'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>t</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_u</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'u'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>u</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_v</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'v'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>v</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_w</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'w'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>w</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_x</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'x'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>x</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_y</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'y'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>y</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_z</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'z'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>z</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_DELETE</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>delete</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP0</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad 0</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP1</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad 1</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP2</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad 2</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP3</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad 3</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP4</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad 4</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP5</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad 5</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP6</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad 6</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP7</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad 7</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP8</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad 8</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP9</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad 9</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP_PERIOD</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'.'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad period</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP_DIVIDE</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'/'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad divide</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP_MULTIPLY</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'*'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad multiply</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP_MINUS</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'-'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad minus</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP_PLUS</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'+'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad plus</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP_ENTER</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'\r'</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad enter</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_KP_EQUALS</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>'='</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>keypad equals</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_UP</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>up arrow</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_DOWN</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>down arrow</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_RIGHT</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>right arrow</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_LEFT</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>left arrow</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_INSERT</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>insert</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_HOME</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>home</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_END</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>end</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_PAGEUP</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>page up</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_PAGEDOWN</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>page down</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F1</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F1</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F2</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F2</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F3</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F3</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F4</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F4</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F5</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F5</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F6</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F6</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F7</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F7</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F8</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F8</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F9</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F9</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F10</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F10</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F11</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F11</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F12</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F12</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F13</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F13</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F14</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F14</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_F15</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>F15</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_NUMLOCK</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>numlock</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_CAPSLOCK</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>capslock</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_SCROLLOCK</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>scrollock</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_RSHIFT</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>right shift</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_LSHIFT</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>left shift</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_RCTRL</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>right ctrl</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_LCTRL</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>left ctrl</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_RALT</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>right alt</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_LALT</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>left alt</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_RMETA</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>right meta</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_LMETA</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>left meta</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_LSUPER</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>left windows key</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_RSUPER</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>right windows key</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_MODE</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>mode shift</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_HELP</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>help</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_PRINT</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>print-screen</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_SYSREQ</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>SysRq</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_BREAK</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>break</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_MENU</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>menu</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_POWER</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>power</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=168>
+				<P ALIGN=LEFT>SDLK_EURO</P>
+			</TD>
+			<TD WIDTH=169>
+				<P ALIGN=LEFT>&nbsp;</P>
+			</TD>
+			<TD WIDTH=165>
+				<P ALIGN=LEFT>euro</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

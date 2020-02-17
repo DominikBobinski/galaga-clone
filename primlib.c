@@ -144,8 +144,8 @@ int gfx_init() {
                             SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
                             SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
   if (window == NULL) {
-    printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-    exit(3);
+    fprintf(stderr, "Window could not be created! SDL Error: %s\n", SDL_GetError());
+    return 2;
   } else {
     // Create renderer for window
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
@@ -155,8 +155,8 @@ int gfx_init() {
     }
 
     if (renderer == NULL) {
-      printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-      exit(3);
+      fprintf(stderr,"Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+      return 3;
     }
   }
 
