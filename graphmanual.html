@@ -26,7 +26,7 @@ entire scene.</P>
 <H1>Compilation</H1>
 <P>The following command line can be used to compile programs using
 the library:</P>
-<PRE STYLE="margin-bottom: 0.2in">gcc -D_REENTRANT progname.c primlib.c -o progname -lm -lSDL -lpthread -lSDL_gfx</PRE><P>
+<PRE STYLE="margin-bottom: 0.2in">gcc -g -Wall -pedantic `sdl2-config --cflags` primlib.c progname.c -o $@ -lSDL2_gfx `sdl2-config --libs`</PRE><P>
 where <I>progname.c</I> is the name of the main program module.</P>
 <H1>Function reference</H1>
 <H2 CLASS="western">int gfx_init();</H2>
