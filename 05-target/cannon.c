@@ -55,7 +55,7 @@ int main() {
      bullet_distance = 170.0;
      fire_angle = angle;
     }
-    SDL_Delay(100);
+    SDL_Delay(10);
   };
   return 0;
 }

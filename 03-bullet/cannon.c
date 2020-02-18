@@ -33,7 +33,7 @@ int main() {
      angle -= 1.0 * (M_PI/180.0);
     if(gfx_isKeyDown(SDLK_LEFT))
      angle += 1.0 * (M_PI/180.0);
-    SDL_Delay(100);
+    SDL_Delay(10);
   };
   return 0;
 }
