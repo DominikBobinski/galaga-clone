@@ -12,16 +12,16 @@ capabilities to the beginners learning C. It is expected, that after
 getting enough proficiency in C, the programmer will use SDL library
 directly. The library is contained in the file <I>primlib.c</I>.
 Every file using it should include <I>primlib.h</I>. The library
-requires <A HREF="http://www.libsdl.org/">SDL 1.2</A> and <A HREF="http://www.ferzkopp.net/%7Easchiffler/Software/SDL_gfx-2.0/">SDL_gfx</A>
+requires <A HREF="http://www.libsdl.org/">SDL 2.0</A> and <A HREF="http://www.ferzkopp.net/wordpress/2016/01/02/sdl_gfx-sdl2_gfx/">SDL2_gfx</A>
 and can be downloaded <A HREF="primlib.tgz">here</A></P>
 <H1>The coordinate system</H1>
 <P>The coordinate system origin is located at upper-left corner of a
 graphics window. Width and height of the graphics window can be
-queried using the screenWidth() and screenHeight() functions,
-respectively. Before using any of the graphics functions initgraph()
+queried using the gfx_screenWidth() and gfx_screenHeight() functions,
+respectively. Before using any of the graphics functions gfx_init()
 must be called. After the drawing operations, to make the updates to
-the screen visible, call updateScreen(). Before calling
-updateScreen() once again, you must clear the screen and redraw the
+the screen visible, call gfx_updateScreen(). Before calling
+gfx_updateScreen() once again, you must clear the screen and redraw the
 entire scene.</P>
 <H1>Compilation</H1>
 <P>The following command line can be used to compile programs using
