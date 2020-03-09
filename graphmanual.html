@@ -28,7 +28,7 @@ entire scene.</P>
 <H1>Compilation</H1>
 <P>The following command line can be used to compile programs using
 the library:</P>
-<PRE STYLE="margin-bottom: 0.2in">gcc -g -Wall -pedantic `sdl2-config --cflags` primlib.c progname.c -o $@ -lSDL2_gfx `sdl2-config --libs`</PRE><P>
+<PRE STYLE="margin-bottom: 0.2in">gcc -g -Wall -pedantic `sdl2-config --cflags` primlib.c progname.c -o progname -lSDL2_gfx `sdl2-config --libs`</PRE><P>
 where <I>progname.c</I> is the name of the main program module.</P>
 <H1>Function reference</H1>
 <H2 CLASS="western">int gfx_init();</H2>
@@ -73,7 +73,7 @@ using color <I>c</I>.</P>
 visible on the screen.</P>
 <H2 CLASS="western">int gfx_pollkey();</H2>
 <P>Return the code of pressed key, do not wait for the keypress.
-Return-1 if no key has been pressed.</P>
+Return -1 if no key has been pressed.</P>
 <H2 CLASS="western">int gfx_getkey();</H2>
 <P>Wait for the keypress and return the key code.</P>
 <H2 CLASS="western">int gfx_isKeyDown(int key);</H2>
