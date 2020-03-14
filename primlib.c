@@ -10,11 +10,6 @@
 static SDL_Renderer *renderer = NULL;
 static SDL_Window *window = NULL;
 
-// static Uint32 colors[COLOR_MAX] = {0xff000000,
-//                               0xff0000ff, 0xff00ff00, 0xffff0000,
-//                               0xffffff00, 0xffff00ff, 0xff00ffff,
-//                               0xffffffff};
-
 struct RGB {
   uint8_t r;
   uint8_t g;
