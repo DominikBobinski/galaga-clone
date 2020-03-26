@@ -14,34 +14,32 @@ struct target {
 
 // Draw explosion with the center at coordinates (x,y)
 void drawExplosion(int x, int y, float scaling) {
-  int x_triangle = x;
-  int y_triangle = y;
 
-  gfx_filledTriangle(x_triangle - 7 * scaling, y_triangle - 7 * scaling,
-                     x_triangle + 7 * scaling, y_triangle + 7 * scaling,
-                     x_triangle + 22 * scaling, y_triangle - 22 * scaling, RED);
-  gfx_filledTriangle(x_triangle - 7 * scaling, y_triangle - 7 * scaling,
-                     x_triangle + 7 * scaling, y_triangle + 7 * scaling,
-                     x_triangle - 22 * scaling, y_triangle + 22 * scaling, RED);
-  gfx_filledTriangle(x_triangle - 7 * scaling, y_triangle + 7 * scaling,
-                     x_triangle + 7 * scaling, y_triangle - 7 * scaling,
-                     x_triangle - 22 * scaling, y_triangle - 22 * scaling, RED);
-  gfx_filledTriangle(x_triangle - 7 * scaling, y_triangle + 7 * scaling,
-                     x_triangle + 7 * scaling, y_triangle - 7 * scaling,
-                     x_triangle + 22 * scaling, y_triangle + 22 * scaling, RED);
+  gfx_filledTriangle(x - 7 * scaling, y - 7 * scaling,
+                     x + 7 * scaling, y + 7 * scaling,
+                     x + 22 * scaling, y - 22 * scaling, RED);
+  gfx_filledTriangle(x - 7 * scaling, y - 7 * scaling,
+                     x + 7 * scaling, y + 7 * scaling,
+                     x - 22 * scaling, y + 22 * scaling, RED);
+  gfx_filledTriangle(x - 7 * scaling, y + 7 * scaling,
+                     x + 7 * scaling, y - 7 * scaling,
+                     x - 22 * scaling, y - 22 * scaling, RED);
+  gfx_filledTriangle(x - 7 * scaling, y + 7 * scaling,
+                     x + 7 * scaling, y - 7 * scaling,
+                     x + 22 * scaling, y + 22 * scaling, RED);
 
-  gfx_filledTriangle(x_triangle - 13 * scaling, y_triangle,
-                     x_triangle + 13 * scaling, y_triangle, x_triangle,
-                     y_triangle - 35 * scaling, RED);
-  gfx_filledTriangle(x_triangle - 13 * scaling, y_triangle,
-                     x_triangle + 13 * scaling, y_triangle, x_triangle,
-                     y_triangle + 35 * scaling, RED);
-  gfx_filledTriangle(x_triangle, y_triangle - 13 * scaling, x_triangle,
-                     y_triangle + 13 * scaling, x_triangle - 35 * scaling,
-                     y_triangle, RED);
-  gfx_filledTriangle(x_triangle, y_triangle - 13 * scaling, x_triangle,
-                     y_triangle + 13 * scaling, x_triangle + 35 * scaling,
-                     y_triangle, RED);
+  gfx_filledTriangle(x - 13 * scaling, y,
+                     x + 13 * scaling, y, x,
+                     y - 35 * scaling, RED);
+  gfx_filledTriangle(x - 13 * scaling, y,
+                     x + 13 * scaling, y, x,
+                     y + 35 * scaling, RED);
+  gfx_filledTriangle(x, y - 13 * scaling, x,
+                     y + 13 * scaling, x - 35 * scaling,
+                     y, RED);
+  gfx_filledTriangle(x, y - 13 * scaling, x,
+                     y + 13 * scaling, x + 35 * scaling,
+                     y, RED);
 }
 
 
