@@ -1,4 +1,3 @@
-
 #include "primlib.h"
 #include <math.h>
 #include <stdlib.h>
@@ -8,57 +7,46 @@ struct target {
   int y;
   int speed_x;
   int is_explosion;
-  int explosion_counter; // ile razy wyswietlalismy eksplozje
+  int explosion_counter; // how many times we have already displayed an
+                         // explosion animation
   int color;
 };
 
 // Draw explosion with the center at coordinates (x,y)
 void drawExplosion(int x, int y, float scaling) {
 
-  gfx_filledTriangle(x - 7 * scaling, y - 7 * scaling,
-                     x + 7 * scaling, y + 7 * scaling,
-                     x + 22 * scaling, y - 22 * scaling, RED);
-  gfx_filledTriangle(x - 7 * scaling, y - 7 * scaling,
-                     x + 7 * scaling, y + 7 * scaling,
-                     x - 22 * scaling, y + 22 * scaling, RED);
-  gfx_filledTriangle(x - 7 * scaling, y + 7 * scaling,
-                     x + 7 * scaling, y - 7 * scaling,
-                     x - 22 * scaling, y - 22 * scaling, RED);
-  gfx_filledTriangle(x - 7 * scaling, y + 7 * scaling,
-                     x + 7 * scaling, y - 7 * scaling,
-                     x + 22 * scaling, y + 22 * scaling, RED);
+  gfx_filledTriangle(x - 7 * scaling, y - 7 * scaling, x + 7 * scaling,
+                     y + 7 * scaling, x + 22 * scaling, y - 22 * scaling, RED);
+  gfx_filledTriangle(x - 7 * scaling, y - 7 * scaling, x + 7 * scaling,
+                     y + 7 * scaling, x - 22 * scaling, y + 22 * scaling, RED);
+  gfx_filledTriangle(x - 7 * scaling, y + 7 * scaling, x + 7 * scaling,
+                     y - 7 * scaling, x - 22 * scaling, y - 22 * scaling, RED);
+  gfx_filledTriangle(x - 7 * scaling, y + 7 * scaling, x + 7 * scaling,
+                     y - 7 * scaling, x + 22 * scaling, y + 22 * scaling, RED);
 
-  gfx_filledTriangle(x - 13 * scaling, y,
-                     x + 13 * scaling, y, x,
+  gfx_filledTriangle(x - 13 * scaling, y, x + 13 * scaling, y, x,
                      y - 35 * scaling, RED);
-  gfx_filledTriangle(x - 13 * scaling, y,
-                     x + 13 * scaling, y, x,
+  gfx_filledTriangle(x - 13 * scaling, y, x + 13 * scaling, y, x,
                      y + 35 * scaling, RED);
-  gfx_filledTriangle(x, y - 13 * scaling, x,
-                     y + 13 * scaling, x - 35 * scaling,
+  gfx_filledTriangle(x, y - 13 * scaling, x, y + 13 * scaling, x - 35 * scaling,
                      y, RED);
-  gfx_filledTriangle(x, y - 13 * scaling, x,
-                     y + 13 * scaling, x + 35 * scaling,
+  gfx_filledTriangle(x, y - 13 * scaling, x, y + 13 * scaling, x + 35 * scaling,
                      y, RED);
 }
 
-
 void draw_target(struct target *t) {
   if (!t->is_explosion)
-      gfx_filledRect(t->x - 10, t->y - 10, t->x + 10, t->y + 10,
-                     t->color); // cel
+    gfx_filledRect(t->x - 10, t->y - 10, t->x + 10, t->y + 10,
+                   t->color); // target
 
   if (t->is_explosion) {
     drawExplosion(t->x, t->y + t->explosion_counter * 10,
                   t->explosion_counter / 5.0);
   }
-
 }
 
-
 void move_target(struct target *t) {
-  if(!t->is_explosion)
-  {
+  if (!t->is_explosion) {
     t->x += t->speed_x;
 
     if (t->x > gfx_screenWidth())
@@ -128,26 +116,23 @@ int main() {
     for (int i = 0; i < num_targets; ++i)
       draw_target(&(t[i]));
 
-
+    // bullet position wrt the center of the bottom of the screen
     int x_bullet = bullet_distance * cos(fire_angle);
     int y_bullet = bullet_distance * sin(fire_angle);
-    int x_bullet_pot = gfx_screenWidth() / 2 + x_bullet;
-    int y_bullet_pot = gfx_screenHeight() - y_bullet;
+
+    // bullet position wrt the top-left corner
+    int x_bullet_tlc = gfx_screenWidth() / 2 + x_bullet;
+    int y_bullet_tlc = gfx_screenHeight() - y_bullet;
 
     if (is_shooting) {
-      //      if(!is_explosion)
-      gfx_filledCircle(gfx_screenWidth() / 2 + x_bullet,
-                       gfx_screenHeight() - y_bullet, 10, RED); // pocisk
-
-
+      gfx_filledCircle(x_bullet_tlc, y_bullet_tlc, 10, RED); // bullet
     }
 
     gfx_updateScreen();
 
-    if (is_shooting)
-    {
+    if (is_shooting) {
       for (int i = 0; i < num_targets; ++i) {
-        if (hypot(x_bullet_pot - t[i].x, y_bullet_pot - t[i].y) < 50) {
+        if (hypot(x_bullet_tlc - t[i].x, y_bullet_tlc - t[i].y) < 50) {
           t[i].is_explosion = 1;
           t[i].explosion_counter = 0;
         }
@@ -156,7 +141,7 @@ int main() {
     }
 
     for (int i = 0; i < num_targets; ++i)
-        move_target(&(t[i]));
+      move_target(&(t[i]));
 
     if (gfx_isKeyDown(SDLK_RIGHT))
       angle -= 1.0 * (M_PI / 180.0);
