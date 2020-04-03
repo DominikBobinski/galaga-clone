@@ -72,27 +72,32 @@ void draw_bullet(int x1, int y1, int x2, int y2, int width, double taper, int co
   int dy = y2 - y1;
 
   // define vector perpendicular to the central line
-  int dy_p = dx;
   int dx_p = dy;
+  int dy_p = -dx;
   double len = hypot(dx_p, dy_p);
 
   // scale its length to proper width
-  int dy_p_s = width / (2.0 * len) * dy_p;
   int dx_p_s = width / (2.0 * len) * dx_p;
+  int dy_p_s = width / (2.0 * len) * dy_p;
+
+
+  // scale the vector by taper
+  int dx_p_s_t = dx_p_s * taper;
+  int dy_p_s_t = dy_p_s * taper;
 
   // compute corners
 
-  int x1c = x2 - dx_p_s * taper;
-  int y1c = y2 + dy_p_s * taper;
+  int x1c = x2 - dx_p_s_t;
+  int y1c = y2 - dy_p_s_t;
 
-  int x2c = x2 + dx_p_s * taper;
-  int y2c = y2 - dy_p_s * taper;
+  int x2c = x2 + dx_p_s_t;
+  int y2c = y2 + dy_p_s_t;
 
   int x3c = x1 - dx_p_s;
-  int y3c = y1 + dy_p_s;
+  int y3c = y1 - dy_p_s;
 
   int x4c = x1 + dx_p_s;
-  int y4c = y1 - dy_p_s;
+  int y4c = y1 + dy_p_s;
 
   gfx_filledTriangle(x1c, y1c, x2c, y2c, x3c, y3c, color);
   gfx_filledTriangle(x4c, y4c, x2c, y2c, x3c, y3c, color);
