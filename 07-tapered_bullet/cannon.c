@@ -68,6 +68,7 @@ void move_target(struct target *t) {
 
 // draw isosceles trapezoid with the center of larger base at (x1,y1), center of smaller base at (x2,y2)
 // width - width of larger base, taper - ratio of smaller base to larger base
+// see drawing in bullet.png
 void draw_bullet(int x1, int y1, int x2, int y2, int width, double taper, int color) {
   // define vector representing the central line
   int dx = x2 - x1;
