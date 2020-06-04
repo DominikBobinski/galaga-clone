@@ -114,7 +114,7 @@ int main() {
 
   double bullet_distance;
   int is_shooting = 0;
-  double fire_angle;
+  double fire_angle = 0;
 
   const int num_targets = 3;
 
