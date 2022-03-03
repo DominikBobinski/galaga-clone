@@ -6,7 +6,7 @@ all: $(TARGET)
 	gcc -g -I.. -Wall -pedantic `sdl2-config --cflags` -c  $< -o $@
 
 $(TARGET): $(TARGET).o ../primlib.o
-	gcc -g -I.. -Wall -pedantic `sdl2-config --cflags` ../primlib.o  $< -o $@ -lSDL2_gfx `sdl2-config --libs`
+	gcc -g -I.. -Wall -pedantic `sdl2-config --cflags` ../primlib.o  $< -o $@ -lSDL2_gfx `sdl2-config --libs` -lm
 
 ../primlib.o: ../primlib.c ../primlib.h
 
