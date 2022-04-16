@@ -6,6 +6,20 @@
 
 #define INITIAL_BULLET_DISTANCE_FROM_CANNON 170
 
+struct Bullet {
+  int x;
+  int y;
+  double fire_angle;
+  double distance;
+  double to_enemy_distance;
+};
+
+// Sets the initial bullet-cannon distance and the bullet angle.
+void shoot(struct Bullet *bullet, double angle) { 
+  bullet->distance = INITIAL_BULLET_DISTANCE_FROM_CANNON;
+  bullet->fire_angle = angle;
+}
+
 void draw_target(int x_target, int y_target, double y_target_sin) {
   gfx_filledCircle(x_target, y_target + 20 * y_target_sin, 10, MAGENTA);
 }
@@ -30,13 +44,6 @@ void draw_bullet(int x_bullet, int y_bullet) {
                    gfx_screenHeight() - y_bullet, 10, RED);
 }
 
-struct Bullet {
-  int x;
-  int y;
-  double fire_angle;
-  double distance;
-  double to_enemy_distance;
-};
 
 
 
@@ -121,12 +128,10 @@ int main() {
 
     if (should_shoot == true) {
       bullet_count += 1;
-      bullet1.distance = INITIAL_BULLET_DISTANCE_FROM_CANNON;
-      bullet2.distance = INITIAL_BULLET_DISTANCE_FROM_CANNON;
       if (bullet_count == 1)
-        bullet1.fire_angle = angle;
+        shoot(&bullet1, angle);
       if (bullet_count == 2)
-        bullet2.fire_angle = angle;
+        shoot(&bullet2, angle);
       should_shoot = false;
     }
 
