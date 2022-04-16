@@ -36,6 +36,8 @@ struct Bullet {
   double to_enemy_distance;
 };
 
+
+
 int main() {
   if (gfx_init())
     exit(3);
@@ -142,12 +144,12 @@ int main() {
       bullet2.distance += 15;
     }
 
-    if (bullet1.distance > gfx_screenHeight()) {
+    if (bullet1.y > gfx_screenHeight() || bullet1.x > gfx_screenWidth() / 2) {
       bullet1.distance = 0;
       bullet_count -= 1;
     }
 
-    if (bullet2.distance > gfx_screenHeight()) {
+    if (bullet2.y > gfx_screenHeight()) {
       bullet2.distance = 0;
       bullet_count -= 1;
     }
