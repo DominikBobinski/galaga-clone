@@ -4,6 +4,8 @@
 #include <math.h>
 #include <stdbool.h>
 
+#define INITIAL_BULLET_DISTANCE_FROM_CANNON 170
+
 void draw_target(int x_target, int y_target, double y_target_sin) {
   gfx_filledCircle(x_target, y_target + 20 * y_target_sin, 10, MAGENTA);
 }
@@ -119,8 +121,8 @@ int main() {
 
     if (should_shoot == true) {
       bullet_count += 1;
-      bullet1.distance = 170.0;
-      bullet2.distance = 200.0;
+      bullet1.distance = INITIAL_BULLET_DISTANCE_FROM_CANNON;
+      bullet2.distance = INITIAL_BULLET_DISTANCE_FROM_CANNON;
       if (bullet_count == 1)
         bullet1.fire_angle = angle;
       if (bullet_count == 2)
