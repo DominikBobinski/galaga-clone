@@ -29,10 +29,8 @@ void draw_target(int x_target, int y_target, double y_target_sin) {
 }
 
 // Removes the bullet that hit a target.
-void destroy_bullet(bool *bullet, int *bullet_count) {
-  *bullet_count -= 1;
-  *bullet = false;
-}
+void destroy_bullet(bool *bullet) { *bullet = false; }
+
 // Resets the target's position.
 void destroy_target(int *x_target) { *x_target = 0; }
 
@@ -86,8 +84,6 @@ int main() {
   double y_target_sin;
   double path_angle = 0;
 
-  int bullet_count = 0;
-
   int explosion_frame_counter = 0;
   int x_explosion = 0;
   int y_explosion = 0;
@@ -95,12 +91,8 @@ int main() {
   while (1) {
     bool should_shoot = false;
 
-    if (gfx_pollkey() == SDLK_SPACE && bullet_count < 2)
+    if (gfx_pollkey() == SDLK_SPACE)
       should_shoot = true;
-
-    if (bullet_count < 0) {
-      bullet_count = 0;
-    }
 
     x1_barrel = 150 * cos(angle - delta_angle);
     y1_barrel = 150 * sin(angle - delta_angle);
@@ -136,7 +128,6 @@ int main() {
     }
 
     if (should_shoot == true) {
-      bullet_count += 1;
       if (bullets[0].visible == false) {
         bullets[0].visible = true;
         shoot(&bullets[0], angle);
@@ -160,12 +151,10 @@ int main() {
     if (bullets[0].y > gfx_screenHeight() ||
         bullets[0].x > gfx_screenWidth() / 2) {
       bullets[0].visible = false;
-      bullet_count -= 1;
     }
 
     if (bullets[1].y > gfx_screenHeight()) {
       bullets[1].visible = false;
-      bullet_count -= 1;
     }
 
     for (int i = 0; i <= MAX_BULLETS; ++i) {
@@ -176,14 +165,11 @@ int main() {
         x_explosion = x_target;
         y_explosion = y_target;
 
-        destroy_bullet(&bullets[i].visible, &bullet_count);
+        destroy_bullet(&bullets[i].visible);
         explosion_frame_counter = EXPLOSION_FRAMES;
         destroy_target(&x_target);
       }
     }
-
-    printf("%d", bullet_count);
-    printf("Space \n");
 
     gfx_updateScreen();
 
