@@ -6,13 +6,13 @@
 
 #define INITIAL_BULLET_DISTANCE_FROM_CANNON 170
 #define MAX_BULLETS 2
+#define MIN_DISTANCE_FOR_HIT 20
 
 struct Bullet {
   int x;
   int y;
   double fire_angle;
   double distance;
-  double to_enemy_distance;
 };
 
 // Sets the initial bullet-cannon distance and the bullet angle.
@@ -31,8 +31,14 @@ void destroy_bullet(bool *bullet, int *bullet_count) {
   *bullet = false;
 }
 // Resets the target's position.
-void destroy_target(int *x_target) {
-  *x_target = 0;
+void destroy_target(int *x_target) { *x_target = 0; }
+
+// Detects if a bullet came in contact with a target, returns true or false.
+bool is_hit(int x_target, int y_target, int bullet_x, int bullet_y) {
+  double bullet_to_enemy_distance =
+      hypot((x_target - bullet_x), (y_target - bullet_y));
+
+  return bullet_to_enemy_distance <= MIN_DISTANCE_FOR_HIT;
 }
 
 void draw_explosion(int x_target, int y_target, int scale) {
@@ -174,17 +180,12 @@ int main() {
       bullet_count -= 1;
     }
 
-    bullet1.to_enemy_distance =
-        hypot((x_target - (gfx_screenWidth() / 2 + bullet1.x)),
-              (y_target - (gfx_screenHeight() - bullet1.y)));
-
-    bullet2.to_enemy_distance =
-        hypot((x_target - (gfx_screenWidth() / 2 + bullet2.x)),
-              (y_target - (gfx_screenHeight() - bullet2.y)));
-
     int scale = 1;
 
-    if (bullet1.to_enemy_distance <= 20) {
+    if (bullets[0] == true &&
+        is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullet1.x,
+               gfx_screenHeight() - bullet1.y)) {
+
       destroy_bullet(&bullets[0], &bullet_count);
 
       while (scale <= 20) {
@@ -198,7 +199,10 @@ int main() {
       continue;
     }
 
-    if (bullet2.to_enemy_distance <= 20) {
+    if (bullets[1] == true &&
+        is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullet2.x,
+               gfx_screenHeight() - bullet2.y)) {
+
       destroy_bullet(&bullets[1], &bullet_count);
 
       while (scale <= 20) {
