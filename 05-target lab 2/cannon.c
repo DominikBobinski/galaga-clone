@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #define INITIAL_BULLET_DISTANCE_FROM_CANNON 170
+#define MAX_BULLETS 2
 
 struct Bullet {
   int x;
@@ -15,7 +16,7 @@ struct Bullet {
 };
 
 // Sets the initial bullet-cannon distance and the bullet angle.
-void shoot(struct Bullet *bullet, double angle) { 
+void shoot(struct Bullet *bullet, double angle) {
   bullet->distance = INITIAL_BULLET_DISTANCE_FROM_CANNON;
   bullet->fire_angle = angle;
 }
@@ -44,12 +45,11 @@ void draw_bullet(int x_bullet, int y_bullet) {
                    gfx_screenHeight() - y_bullet, 10, RED);
 }
 
-
-
-
 int main() {
   if (gfx_init())
     exit(3);
+
+  bool bullets[MAX_BULLETS] = {false, false};
 
   double angle = 90.0 * (M_PI / 180.0);
   const double delta_angle = 2.0 * (M_PI / 180.0);
@@ -128,17 +128,20 @@ int main() {
 
     if (should_shoot == true) {
       bullet_count += 1;
-      if (bullet_count == 1)
+      if (bullets[0] == false) {
+        bullets[0] = true;
         shoot(&bullet1, angle);
-      if (bullet_count == 2)
+      } else if (bullets[1] == false) {
+        bullets[1] = true;
         shoot(&bullet2, angle);
+      }
       should_shoot = false;
     }
 
     bullet1.x = bullet1.distance * cos(bullet1.fire_angle);
     bullet1.y = bullet1.distance * sin(bullet1.fire_angle);
 
-    if (bullet_count == 1 || bullet_count == 2) {
+    if (bullets[0] == true) {
       draw_bullet(bullet1.x, bullet1.y);
       bullet1.distance += 10.0;
     }
@@ -146,18 +149,18 @@ int main() {
     bullet2.x = bullet2.distance * cos(bullet2.fire_angle);
     bullet2.y = bullet2.distance * sin(bullet2.fire_angle);
 
-    if (bullet_count == 2) {
+    if (bullets[1] == true) {
       draw_bullet(bullet2.x, bullet2.y);
       bullet2.distance += 15;
     }
 
     if (bullet1.y > gfx_screenHeight() || bullet1.x > gfx_screenWidth() / 2) {
-      bullet1.distance = 0;
+      bullets[0] = false;
       bullet_count -= 1;
     }
 
     if (bullet2.y > gfx_screenHeight()) {
-      bullet2.distance = 0;
+      bullets[1] = false;
       bullet_count -= 1;
     }
 
@@ -172,8 +175,9 @@ int main() {
     int scale = 1;
 
     if (bullet1.to_enemy_distance <= 20) {
+      bullets[0] = false;
       bullet_count -= 1;
-      bullet1.distance = 0;
+
       while (scale <= 20) {
         draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
         draw_explosion(x_target, y_target, scale);
@@ -186,8 +190,9 @@ int main() {
     }
 
     if (bullet2.to_enemy_distance <= 20) {
+      bullets[1] = false;
       bullet_count -= 1;
-      bullet2.distance = 0;
+
       while (scale <= 20) {
         draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
         draw_explosion(x_target, y_target, scale);
