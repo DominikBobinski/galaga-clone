@@ -25,6 +25,16 @@ void draw_target(int x_target, int y_target, double y_target_sin) {
   gfx_filledCircle(x_target, y_target + 20 * y_target_sin, 10, MAGENTA);
 }
 
+// Removes the bullet that hit a target.
+void destroy_bullet(bool *bullet, int *bullet_count) {
+  *bullet_count -= 1;
+  *bullet = false;
+}
+// Resets the target's position.
+void destroy_target(int *x_target) {
+  *x_target = 0;
+}
+
 void draw_explosion(int x_target, int y_target, int scale) {
   gfx_circle(x_target, y_target, 5 * scale / 2, RED);
   gfx_circle(x_target, y_target, 3 * scale / 4, YELLOW);
@@ -175,8 +185,7 @@ int main() {
     int scale = 1;
 
     if (bullet1.to_enemy_distance <= 20) {
-      bullets[0] = false;
-      bullet_count -= 1;
+      destroy_bullet(&bullets[0], &bullet_count);
 
       while (scale <= 20) {
         draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
@@ -185,13 +194,12 @@ int main() {
         SDL_Delay(10);
         scale += 1;
       }
-      x_target = 0;
+      destroy_target(&x_target);
       continue;
     }
 
     if (bullet2.to_enemy_distance <= 20) {
-      bullets[1] = false;
-      bullet_count -= 1;
+      destroy_bullet(&bullets[1], &bullet_count);
 
       while (scale <= 20) {
         draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
@@ -200,7 +208,7 @@ int main() {
         SDL_Delay(10);
         scale += 1;
       }
-      x_target = 0;
+      destroy_target(&x_target);
       continue;
     }
 
