@@ -13,6 +13,7 @@ struct Bullet {
   int y;
   double fire_angle;
   double distance;
+  bool visible;
 };
 
 // Sets the initial bullet-cannon distance and the bullet angle.
@@ -65,22 +66,12 @@ int main() {
   if (gfx_init())
     exit(3);
 
-  bool bullets[MAX_BULLETS] = {false, false};
+  struct Bullet bullets[MAX_BULLETS] =
+  { {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false},
+    {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false} };
 
   double angle = 90.0 * (M_PI / 180.0);
   const double delta_angle = 2.0 * (M_PI / 180.0);
-
-  struct Bullet bullet1;
-  bullet1.x = 0;
-  bullet1.y = 0;
-  bullet1.fire_angle = 0;
-  bullet1.distance = 0;
-
-  struct Bullet bullet2;
-  bullet2.x = 0;
-  bullet2.y = 0;
-  bullet2.fire_angle = 0;
-  bullet2.distance = 0;
 
   int x1_barrel;
   int y1_barrel;
@@ -144,49 +135,48 @@ int main() {
 
     if (should_shoot == true) {
       bullet_count += 1;
-      if (bullets[0] == false) {
-        bullets[0] = true;
-        shoot(&bullet1, angle);
-      } else if (bullets[1] == false) {
-        bullets[1] = true;
-        shoot(&bullet2, angle);
+      if (bullets[0].visible == false) {
+        bullets[0].visible = true;
+        shoot(&bullets[0], angle);
+      } else if (bullets[1].visible == false) {
+        bullets[1].visible = true;
+        shoot(&bullets[1], angle);
       }
       should_shoot = false;
     }
 
-    bullet1.x = bullet1.distance * cos(bullet1.fire_angle);
-    bullet1.y = bullet1.distance * sin(bullet1.fire_angle);
+    bullets[0].x = bullets[0].distance * cos(bullets[0].fire_angle);
+    bullets[0].y = bullets[0].distance * sin(bullets[0].fire_angle);
 
-    if (bullets[0] == true) {
-      draw_bullet(bullet1.x, bullet1.y);
-      bullet1.distance += 10.0;
+    if (bullets[0].visible == true) {
+      draw_bullet(bullets[0].x, bullets[0].y);
+      bullets[0].distance += 10.0;
     }
 
-    bullet2.x = bullet2.distance * cos(bullet2.fire_angle);
-    bullet2.y = bullet2.distance * sin(bullet2.fire_angle);
+    bullets[1].x = bullets[1].distance * cos(bullets[1].fire_angle);
+    bullets[1].y = bullets[1].distance * sin(bullets[1].fire_angle);
 
-    if (bullets[1] == true) {
-      draw_bullet(bullet2.x, bullet2.y);
-      bullet2.distance += 15;
+    if (bullets[1].visible == true) {
+      draw_bullet(bullets[1].x, bullets[1].y);
+      bullets[1].distance += 15;
     }
 
-    if (bullet1.y > gfx_screenHeight() || bullet1.x > gfx_screenWidth() / 2) {
-      bullets[0] = false;
+    if (bullets[0].y > gfx_screenHeight() || bullets[0].x > gfx_screenWidth() / 2) {
+      bullets[0].visible = false;
       bullet_count -= 1;
     }
 
-    if (bullet2.y > gfx_screenHeight()) {
-      bullets[1] = false;
+    if (bullets[1].y > gfx_screenHeight()) {
+      bullets[1].visible = false;
       bullet_count -= 1;
     }
 
     int scale = 1;
+    if (bullets[0].visible == true &&
+        is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullets[0].x,
+               gfx_screenHeight() - bullets[0].y)) {
 
-    if (bullets[0] == true &&
-        is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullet1.x,
-               gfx_screenHeight() - bullet1.y)) {
-
-      destroy_bullet(&bullets[0], &bullet_count);
+      destroy_bullet(&bullets[0].visible, &bullet_count);
 
       while (scale <= 20) {
         draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
@@ -199,11 +189,11 @@ int main() {
       continue;
     }
 
-    if (bullets[1] == true &&
-        is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullet2.x,
-               gfx_screenHeight() - bullet2.y)) {
+    if (bullets[1].visible == true &&
+        is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullets[1].x,
+               gfx_screenHeight() - bullets[1].y)) {
 
-      destroy_bullet(&bullets[1], &bullet_count);
+      destroy_bullet(&bullets[1].visible, &bullet_count);
 
       while (scale <= 20) {
         draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
