@@ -183,28 +183,18 @@ int main() {
       bullet_count -= 1;
     }
 
-    if (bullets[0].visible == true &&
-        is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullets[0].x,
-               gfx_screenHeight() - bullets[0].y)) {
-      
-      x_explosion = x_target;
-      y_explosion = y_target;
+    for (int i = 0; i <= MAX_BULLETS; ++i) {
+      if (bullets[i].visible == true &&
+          is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullets[i].x,
+                 gfx_screenHeight() - bullets[i].y)) {
 
-      destroy_bullet(&bullets[0].visible, &bullet_count);
-      explosion_frame_counter = EXPLOSION_FRAMES;
-      destroy_target(&x_target);
-    }
+        x_explosion = x_target;
+        y_explosion = y_target;
 
-    if (bullets[1].visible == true &&
-        is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullets[1].x,
-               gfx_screenHeight() - bullets[1].y)) {
-
-      x_explosion = x_target;
-      y_explosion = y_target;
-
-      destroy_bullet(&bullets[1].visible, &bullet_count);
-      explosion_frame_counter = EXPLOSION_FRAMES;
-      destroy_target(&x_target);
+        destroy_bullet(&bullets[i].visible, &bullet_count);
+        explosion_frame_counter = EXPLOSION_FRAMES;
+        destroy_target(&x_target);
+      }
     }
 
     printf("%d", bullet_count);
