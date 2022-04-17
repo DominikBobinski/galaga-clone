@@ -8,6 +8,7 @@
 #define MAX_BULLETS 2
 #define MIN_DISTANCE_FOR_HIT 20
 #define EXPLOSION_FRAMES 20
+#define BULLET_VELOCITY 15
 
 struct Bullet {
   int x;
@@ -156,20 +157,14 @@ int main() {
       should_shoot = false;
     }
 
-    bullets[0].x = bullets[0].distance * cos(bullets[0].fire_angle);
-    bullets[0].y = bullets[0].distance * sin(bullets[0].fire_angle);
+    for (int i = 0; i <= MAX_BULLETS; ++i) {
+      bullets[i].x = bullets[i].distance * cos(bullets[i].fire_angle);
+      bullets[i].y = bullets[i].distance * sin(bullets[i].fire_angle);
 
-    if (bullets[0].visible == true) {
-      draw_bullet(bullets[0].x, bullets[0].y);
-      bullets[0].distance += 10.0;
-    }
-
-    bullets[1].x = bullets[1].distance * cos(bullets[1].fire_angle);
-    bullets[1].y = bullets[1].distance * sin(bullets[1].fire_angle);
-
-    if (bullets[1].visible == true) {
-      draw_bullet(bullets[1].x, bullets[1].y);
-      bullets[1].distance += 15;
+      if (bullets[i].visible == true) {
+        draw_bullet(bullets[i].x, bullets[i].y);
+        bullets[i].distance += BULLET_VELOCITY;
+      }
     }
 
     if (bullets[0].y > gfx_screenHeight() ||
