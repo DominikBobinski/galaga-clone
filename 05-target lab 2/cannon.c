@@ -9,6 +9,8 @@
 #define MIN_DISTANCE_FOR_HIT 20
 #define EXPLOSION_FRAMES 20
 #define BULLET_VELOCITY 15
+#define TARGET_VELOCITY 3
+#define AVERAGE_TARGET_HEIGHT 80
 
 struct Bullet {
   int x;
@@ -24,8 +26,15 @@ void shoot(struct Bullet *bullet, double angle) {
   bullet->fire_angle = angle;
 }
 
-void draw_target(int x_target, int y_target, double y_target_sin) {
-  gfx_filledCircle(x_target, y_target + 20 * y_target_sin, 10, MAGENTA);
+void draw_target(int x_target, int y_target) {
+  gfx_filledCircle(x_target, y_target, 10, MAGENTA);
+}
+
+void move_target(int *x_target, int *y_target) {
+  const int y_amplitude = 20;
+  const double vertical_displacement = y_amplitude * sin(*x_target * 0.02);
+  *y_target = AVERAGE_TARGET_HEIGHT + vertical_displacement;
+  *x_target += TARGET_VELOCITY;
 }
 
 // Removes the bullet that hit a target.
@@ -82,10 +91,7 @@ int main() {
   int y2_barrel;
 
   int x_target = 0;
-  int y_target = 80;
-
-  double y_target_sin;
-  double path_angle = 0;
+  int y_target = AVERAGE_TARGET_HEIGHT;
 
   int explosion_frame_counter = 0;
   int x_explosion = 0;
@@ -104,7 +110,8 @@ int main() {
 
     draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
 
-    draw_target(x_target, y_target, y_target_sin);
+    draw_target(x_target, y_target);
+    move_target(&x_target, &y_target);
 
     if (explosion_frame_counter != 0) {
       int scale = EXPLOSION_FRAMES - explosion_frame_counter;
@@ -112,14 +119,8 @@ int main() {
       explosion_frame_counter -= 1;
     }
 
-    x_target += 3;
-
-    y_target_sin = sin(path_angle);
-    path_angle += 0.1;
-
     if (x_target > gfx_screenWidth()) {
       x_target = 0;
-      y_target = 80;
     }
 
     if (gfx_isKeyDown(SDLK_RIGHT)) {
