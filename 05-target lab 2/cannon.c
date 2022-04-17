@@ -94,19 +94,9 @@ int main() {
 
   while (1) {
     bool should_shoot = false;
-    SDL_Event event;
 
-    while (SDL_PollEvent(&event)) {
-      switch (event.type) {
-      case SDL_KEYDOWN:
-        if (event.key.keysym.sym == SDLK_SPACE && bullet_count < 2) {
-          should_shoot = true;
-        }
-        break;
-      case SDL_QUIT:
-        exit(3);
-      }
-    }
+    if (gfx_pollkey() == SDLK_SPACE && bullet_count < 2)
+      should_shoot = true;
 
     if (bullet_count < 0) {
       bullet_count = 0;
