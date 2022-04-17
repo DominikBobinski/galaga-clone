@@ -58,8 +58,11 @@ void draw_scene(int x1_barrel, int y1_barrel, int x2_barrel, int y2_barrel) {
 }
 
 void draw_bullet(int x_bullet, int y_bullet) {
-  gfx_filledCircle(gfx_screenWidth() / 2 + x_bullet,
-                   gfx_screenHeight() - y_bullet, 10, RED);
+  gfx_filledCircle(x_bullet, y_bullet, 10, RED);
+}
+
+bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
+  return bullet_y <= 0 || bullet_x <= 0 || bullet_x >= gfx_screenWidth();
 }
 
 int main() {
@@ -139,8 +142,10 @@ int main() {
     }
 
     for (int i = 0; i <= MAX_BULLETS; ++i) {
-      bullets[i].x = bullets[i].distance * cos(bullets[i].fire_angle);
-      bullets[i].y = bullets[i].distance * sin(bullets[i].fire_angle);
+      bullets[i].x = gfx_screenWidth() / 2 +
+                     bullets[i].distance * cos(bullets[i].fire_angle);
+      bullets[i].y =
+          gfx_screenHeight() - bullets[i].distance * sin(bullets[i].fire_angle);
 
       if (bullets[i].visible == true) {
         draw_bullet(bullets[i].x, bullets[i].y);
@@ -148,19 +153,14 @@ int main() {
       }
     }
 
-    if (bullets[0].y > gfx_screenHeight() ||
-        bullets[0].x > gfx_screenWidth() / 2) {
-      bullets[0].visible = false;
-    }
-
-    if (bullets[1].y > gfx_screenHeight()) {
-      bullets[1].visible = false;
-    }
+    for (int i = 0; i <= MAX_BULLETS; ++i)
+      if (is_bullet_out_of_bounds(bullets[i].x, bullets[i].y)) {
+        bullets[i].visible = false;
+      }
 
     for (int i = 0; i <= MAX_BULLETS; ++i) {
       if (bullets[i].visible == true &&
-          is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullets[i].x,
-                 gfx_screenHeight() - bullets[i].y)) {
+          is_hit(x_target, y_target, bullets[i].x, bullets[i].y)) {
 
         x_explosion = x_target;
         y_explosion = y_target;
