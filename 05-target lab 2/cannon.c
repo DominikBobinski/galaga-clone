@@ -7,6 +7,7 @@
 #define INITIAL_BULLET_DISTANCE_FROM_CANNON 170
 #define MAX_BULLETS 2
 #define MIN_DISTANCE_FOR_HIT 20
+#define EXPLOSION_FRAMES 20
 
 struct Bullet {
   int x;
@@ -66,9 +67,9 @@ int main() {
   if (gfx_init())
     exit(3);
 
-  struct Bullet bullets[MAX_BULLETS] =
-  { {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false},
-    {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false} };
+  struct Bullet bullets[MAX_BULLETS] = {
+      {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false},
+      {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false}};
 
   double angle = 90.0 * (M_PI / 180.0);
   const double delta_angle = 2.0 * (M_PI / 180.0);
@@ -85,6 +86,10 @@ int main() {
   double path_angle = 0;
 
   int bullet_count = 0;
+
+  int explosion_frame_counter = 0;
+  int x_explosion = 0;
+  int y_explosion = 0;
 
   while (1) {
     bool should_shoot = false;
@@ -114,6 +119,12 @@ int main() {
     draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
 
     draw_target(x_target, y_target, y_target_sin);
+
+    if (explosion_frame_counter != 0) {
+      int scale = EXPLOSION_FRAMES - explosion_frame_counter;
+      draw_explosion(x_explosion, y_explosion, scale);
+      explosion_frame_counter -= 1;
+    }
 
     x_target += 3;
 
@@ -161,7 +172,8 @@ int main() {
       bullets[1].distance += 15;
     }
 
-    if (bullets[0].y > gfx_screenHeight() || bullets[0].x > gfx_screenWidth() / 2) {
+    if (bullets[0].y > gfx_screenHeight() ||
+        bullets[0].x > gfx_screenWidth() / 2) {
       bullets[0].visible = false;
       bullet_count -= 1;
     }
@@ -171,39 +183,28 @@ int main() {
       bullet_count -= 1;
     }
 
-    int scale = 1;
     if (bullets[0].visible == true &&
         is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullets[0].x,
                gfx_screenHeight() - bullets[0].y)) {
+      
+      x_explosion = x_target;
+      y_explosion = y_target;
 
       destroy_bullet(&bullets[0].visible, &bullet_count);
-
-      while (scale <= 20) {
-        draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
-        draw_explosion(x_target, y_target, scale);
-        gfx_updateScreen();
-        SDL_Delay(10);
-        scale += 1;
-      }
+      explosion_frame_counter = EXPLOSION_FRAMES;
       destroy_target(&x_target);
-      continue;
     }
 
     if (bullets[1].visible == true &&
         is_hit(x_target, y_target, gfx_screenWidth() / 2 + bullets[1].x,
                gfx_screenHeight() - bullets[1].y)) {
 
-      destroy_bullet(&bullets[1].visible, &bullet_count);
+      x_explosion = x_target;
+      y_explosion = y_target;
 
-      while (scale <= 20) {
-        draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
-        draw_explosion(x_target, y_target, scale);
-        gfx_updateScreen();
-        SDL_Delay(10);
-        scale += 1;
-      }
+      destroy_bullet(&bullets[1].visible, &bullet_count);
+      explosion_frame_counter = EXPLOSION_FRAMES;
       destroy_target(&x_target);
-      continue;
     }
 
     printf("%d", bullet_count);
