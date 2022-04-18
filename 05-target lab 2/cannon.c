@@ -113,14 +113,14 @@ int main() {
     draw_target(x_target, y_target);
     move_target(&x_target, &y_target);
 
+    if (x_target > gfx_screenWidth()) {
+      x_target = 0;
+    }
+
     if (explosion_frame_counter != 0) {
       int scale = EXPLOSION_FRAMES - explosion_frame_counter;
       draw_explosion(x_explosion, y_explosion, scale);
       explosion_frame_counter -= 1;
-    }
-
-    if (x_target > gfx_screenWidth()) {
-      x_target = 0;
     }
 
     if (gfx_isKeyDown(SDLK_RIGHT)) {
