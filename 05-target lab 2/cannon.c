@@ -152,14 +152,11 @@ int main() {
         draw_bullet(bullets[i].x, bullets[i].y);
         bullets[i].distance += BULLET_VELOCITY;
       }
-    }
 
-    for (int i = 0; i <= MAX_BULLETS; ++i)
       if (is_bullet_out_of_bounds(bullets[i].x, bullets[i].y)) {
         bullets[i].visible = false;
       }
 
-    for (int i = 0; i <= MAX_BULLETS; ++i) {
       if (bullets[i].visible == true &&
           is_hit(x_target, y_target, bullets[i].x, bullets[i].y)) {
 
@@ -171,7 +168,6 @@ int main() {
         destroy_target(&x_target);
       }
     }
-
     gfx_updateScreen();
 
     SDL_Delay(10);
