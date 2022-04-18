@@ -97,9 +97,9 @@ int main() {
   int x_explosion = 0;
   int y_explosion = 0;
 
-  while (1) {
-    bool should_shoot = false;
+  bool should_shoot = false;
 
+  while (1) {
     if (gfx_pollkey() == SDLK_SPACE)
       should_shoot = true;
 
