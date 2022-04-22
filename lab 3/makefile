@@ -3,10 +3,10 @@ TARGET=cannon
 all: $(TARGET)
 
 %.o:%.c 
-	gcc -g -I.. -Wall -pedantic `sdl2-config --cflags` -c  $< -o $@
+	gcc -g -I.. -Wall -pedantic `sdl2-config --cflags` -c -fsanitize=address $< -o $@
 
 $(TARGET): $(TARGET).o ../primlib.o
-	gcc -g -I.. -Wall -pedantic `sdl2-config --cflags` ../primlib.o  $< -o $@ -lSDL2_gfx `sdl2-config --libs` -lm
+	gcc -g -fsanitize=address -I.. -Wall -pedantic `sdl2-config --cflags` ../primlib.o  $< -o $@ -lSDL2_gfx `sdl2-config --libs` -lm
 
 ../primlib.o: ../primlib.c ../primlib.h
 
