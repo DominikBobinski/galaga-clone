@@ -171,7 +171,7 @@ int main() {
       should_shoot = false;
     }
 
-    for (int i = 0; i <= MAX_BULLETS; ++i) {
+    for (int i = 0; i < MAX_BULLETS; ++i) {
       bullets[i].x = gfx_screenWidth() / 2 +
                      bullets[i].distance * cos(bullets[i].fire_angle);
       bullets[i].y =
