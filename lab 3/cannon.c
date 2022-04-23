@@ -84,20 +84,25 @@ bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
 
 void draw_score(int bullet_counter, int enemies_hit_counter) {
   char bullets_shot_text[] = "Bullets shot:";
-  char enemies_hit_text[] = "Enemies hit:";  
-  char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS+1];
-  char enemies_hit_buffer[SCOREBOARD_COUNTER_MAX_DIGITS+1];
+  char enemies_hit_text[] = "Enemies hit:";
+  char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
+  char enemies_hit_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
 
-  gfx_filledRect(gfx_screenWidth() - SCOREBOARD_WIDTH, 0, gfx_screenWidth(), SCOREBOARD_HEIGHT, WHITE);
-  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 10, 20, bullets_shot_text, BLACK);
-  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 10, 40, enemies_hit_text, BLACK);
-  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 120, 20,SDL_itoa(bullet_counter, bullet_count_buffer, 10), BLACK);
-  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 120, 40,SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), BLACK);
+  gfx_filledRect(gfx_screenWidth() - SCOREBOARD_WIDTH, 0, gfx_screenWidth(),
+                 SCOREBOARD_HEIGHT, WHITE);
+  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 10, 20, bullets_shot_text,
+              BLACK);
+  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 10, 40, enemies_hit_text,
+              BLACK);
+  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 120, 20,
+              SDL_itoa(bullet_counter, bullet_count_buffer, 10), BLACK);
+  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 120, 40,
+              SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), BLACK);
 }
 
 int max_num_from_digits(int digits) {
   int max_num = 0;
-  for(int i = 0; i < digits; ++i) {
+  for (int i = 0; i < digits; ++i) {
     max_num = max_num * 10 + 9;
   }
   return max_num;
@@ -141,10 +146,11 @@ int main() {
     y2_barrel = 150 * sin(angle + delta_angle);
 
     if (bullet_counter >= max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
-     bullet_counter = 0;
+      bullet_counter = 0;
     }
 
-    if (enemies_hit_counter >= max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
+    if (enemies_hit_counter >=
+        max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
       enemies_hit_counter = 0;
     }
 
@@ -203,7 +209,7 @@ int main() {
           is_hit(x_target, y_target, bullets[i].x, bullets[i].y)) {
 
         enemies_hit_counter += 1;
-        
+
         x_explosion = x_target;
         y_explosion = y_target;
 
