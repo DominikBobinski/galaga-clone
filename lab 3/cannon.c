@@ -14,6 +14,7 @@
 #define SCOREBOARD_WIDTH 150
 #define SCOREBOARD_HEIGHT 70
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
+#define MAX_TARGETS 2
 
 struct Bullet {
   int x;
@@ -23,7 +24,7 @@ struct Bullet {
   bool visible;
 };
 
-struct target {
+struct Target {
   int x;
   int y;
 };
@@ -116,6 +117,13 @@ int main() {
       {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false},
       {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false}};
 
+  struct Target targets[MAX_TARGETS];
+
+  for (int i = 0; i < MAX_TARGETS; ++i) {
+    targets[i].x = 0;
+    targets[i].y = AVERAGE_TARGET_HEIGHT;
+  }
+
   double angle = 90.0 * (M_PI / 180.0);
   const double delta_angle = 2.0 * (M_PI / 180.0);
 
@@ -123,9 +131,6 @@ int main() {
   int y1_barrel;
   int x2_barrel;
   int y2_barrel;
-
-  int x_target = 0;
-  int y_target = AVERAGE_TARGET_HEIGHT;
 
   int explosion_frame_counter = 0;
   int x_explosion = 0;
@@ -157,11 +162,13 @@ int main() {
     draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
     draw_score(bullet_counter, enemies_hit_counter);
 
-    draw_target(x_target, y_target);
-    move_target(&x_target, &y_target);
+    for (int j = 0; j < MAX_TARGETS; ++j) {
+      draw_target(targets[j].x, targets[j].y);
+      move_target(&targets[j].x, &targets[j].y);
 
-    if (x_target > gfx_screenWidth()) {
-      x_target = 0;
+      if (targets[j].x > gfx_screenWidth()) {
+        targets[j].x = 0;
+      }
     }
 
     if (explosion_frame_counter != 0) {
@@ -205,17 +212,19 @@ int main() {
         bullets[i].visible = false;
       }
 
-      if (bullets[i].visible == true &&
-          is_hit(x_target, y_target, bullets[i].x, bullets[i].y)) {
+      for (int j = 0; j < MAX_TARGETS; ++j) {
+        if (bullets[i].visible == true &&
+            is_hit(targets[j].x, targets[j].y, bullets[i].x, bullets[i].y)) {
 
-        enemies_hit_counter += 1;
+          enemies_hit_counter += 1;
 
-        x_explosion = x_target;
-        y_explosion = y_target;
+          x_explosion = targets[j].x;
+          y_explosion = targets[j].y;
 
-        destroy_bullet(&bullets[i].visible);
-        explosion_frame_counter = EXPLOSION_FRAMES;
-        destroy_target(&x_target);
+          destroy_bullet(&bullets[i].visible);
+          explosion_frame_counter = EXPLOSION_FRAMES;
+          destroy_target(&targets[j].x);
+        }
       }
     }
     gfx_updateScreen();
