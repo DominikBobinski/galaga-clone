@@ -11,8 +11,9 @@
 #define BULLET_VELOCITY 15
 #define TARGET_VELOCITY 3
 #define AVERAGE_TARGET_HEIGHT 80
-#define SCORE_BOARD_WIDTH 150
-#define SCORE_BOARD_HEIGHT 70
+#define SCOREBOARD_WIDTH 150
+#define SCOREBOARD_HEIGHT 70
+#define SCOREBOARD_COUNTER_MAX_DIGITS 3
 
 struct Bullet {
   int x;
@@ -81,13 +82,25 @@ bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
   return bullet_y <= 0 || bullet_x <= 0 || bullet_x >= gfx_screenWidth();
 }
 
-void draw_score(int bullet_counter, int enemies_hit_counter, char *bullets_shot_text, char *enemies_hit_text, char *bullet_count_buffer, char *enemies_hit_buffer) {
-  gfx_filledRect(gfx_screenWidth() - SCORE_BOARD_WIDTH, 0, gfx_screenWidth(), SCORE_BOARD_HEIGHT, WHITE);
-  gfx_textout(gfx_screenWidth() - SCORE_BOARD_WIDTH + 10, 20, bullets_shot_text, BLACK);
-  gfx_textout(gfx_screenWidth() - SCORE_BOARD_WIDTH + 10, 40, enemies_hit_text, BLACK);
-  gfx_textout(gfx_screenWidth() - SCORE_BOARD_WIDTH + 120, 20,SDL_itoa(bullet_counter, bullet_count_buffer, 10), BLACK);
-  gfx_textout(gfx_screenWidth() - SCORE_BOARD_WIDTH + 120, 40,SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), BLACK);
+void draw_score(int bullet_counter, int enemies_hit_counter) {
+  char bullets_shot_text[] = "Bullets shot:";
+  char enemies_hit_text[] = "Enemies hit:";  
+  char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS+1];
+  char enemies_hit_buffer[SCOREBOARD_COUNTER_MAX_DIGITS+1];
 
+  gfx_filledRect(gfx_screenWidth() - SCOREBOARD_WIDTH, 0, gfx_screenWidth(), SCOREBOARD_HEIGHT, WHITE);
+  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 10, 20, bullets_shot_text, BLACK);
+  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 10, 40, enemies_hit_text, BLACK);
+  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 120, 20,SDL_itoa(bullet_counter, bullet_count_buffer, 10), BLACK);
+  gfx_textout(gfx_screenWidth() - SCOREBOARD_WIDTH + 120, 40,SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), BLACK);
+}
+
+int max_num_from_digits(int digits) {
+  int max_num = 0;
+  for(int i = 0; i < digits; ++i) {
+    max_num = max_num * 10 + 9;
+  }
+  return max_num;
 }
 
 int main() {
@@ -127,16 +140,16 @@ int main() {
     x2_barrel = 150 * cos(angle + delta_angle);
     y2_barrel = 150 * sin(angle + delta_angle);
 
-    char bullets_shot_text[] = "Bullets shot:";
-    char enemies_hit_text[] = "Enemies hit:";
+    if (bullet_counter >= max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
+     bullet_counter = 0;
+    }
 
-    char bullet_count_buffer[3];
-    char enemies_hit_buffer[3];
+    if (enemies_hit_counter >= max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
+      enemies_hit_counter = 0;
+    }
 
     draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
-    draw_score(bullet_counter, enemies_hit_counter, bullets_shot_text, enemies_hit_text, bullet_count_buffer, enemies_hit_buffer);
-
-
+    draw_score(bullet_counter, enemies_hit_counter);
 
     draw_target(x_target, y_target);
     move_target(&x_target, &y_target);
