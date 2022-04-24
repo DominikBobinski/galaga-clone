@@ -3,6 +3,9 @@
 #include <SDL2/SDL_keycode.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define INITIAL_BULLET_DISTANCE_FROM_CANNON 170
 #define MAX_BULLETS 2
@@ -14,7 +17,7 @@
 #define SCOREBOARD_WIDTH 150
 #define SCOREBOARD_HEIGHT 70
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
-#define MAX_TARGETS 2
+#define MAX_TARGETS 3
 
 struct Bullet {
   int x;
@@ -113,6 +116,15 @@ int main() {
   if (gfx_init())
     exit(3);
 
+  srand(time(0));
+
+  int target_multipliers[MAX_TARGETS];
+
+  for (int k = 0; k < MAX_TARGETS; ++k) {
+    target_multipliers[k] = rand() % 3 + 1;
+    printf(" %d ", target_multipliers[k]);
+  }
+
   struct Bullet bullets[MAX_BULLETS] = {
       {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false},
       {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false}};
@@ -162,12 +174,15 @@ int main() {
     draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
     draw_score(bullet_counter, enemies_hit_counter);
 
-    for (int j = 0; j < MAX_TARGETS; ++j) {
-      draw_target(targets[j].x, targets[j].y);
-      move_target(&targets[j].x, &targets[j].y);
+    for (int k = 0; k < MAX_TARGETS; ++k) {
+      for (int j = 0; j < MAX_TARGETS; ++j) {
+        targets[j].y = targets[j].y * target_multipliers[k];
+        draw_target(targets[j].x, targets[j].y);
+        move_target(&targets[j].x, &targets[j].y);
 
-      if (targets[j].x > gfx_screenWidth()) {
-        targets[j].x = 0;
+        if (targets[j].x > gfx_screenWidth()) {
+          targets[j].x = 0;
+        }
       }
     }
 
