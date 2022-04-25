@@ -18,6 +18,8 @@
 #define SCOREBOARD_HEIGHT 70
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
 #define MAX_TARGETS 3
+// for loop that adds new enemies multiply by random from range [0-1], if 1
+// then new enemy appears, still respecting MAX_TARGETS
 
 struct Bullet {
   int x;
@@ -30,6 +32,7 @@ struct Bullet {
 struct Target {
   int x;
   int y;
+  int multiplier;
 };
 
 // Sets the initial bullet-cannon distance and the bullet angle.
@@ -42,10 +45,11 @@ void draw_target(int x_target, int y_target) {
   gfx_filledCircle(x_target, y_target, 10, MAGENTA);
 }
 
-void move_target(int *x_target, int *y_target) {
+void move_target(int *x_target, int *y_target, int target_multiplier) {
   const int y_amplitude = 20;
   const double vertical_displacement = y_amplitude * sin(*x_target * 0.02);
-  *y_target = AVERAGE_TARGET_HEIGHT + vertical_displacement;
+  *y_target =
+      (AVERAGE_TARGET_HEIGHT + vertical_displacement) * target_multiplier;
   *x_target += TARGET_VELOCITY;
 }
 
@@ -116,24 +120,18 @@ int main() {
   if (gfx_init())
     exit(3);
 
-  srand(time(0));
-
-  int target_multipliers[MAX_TARGETS];
-
-  for (int k = 0; k < MAX_TARGETS; ++k) {
-    target_multipliers[k] = rand() % 3 + 1;
-    printf(" %d ", target_multipliers[k]);
-  }
-
   struct Bullet bullets[MAX_BULLETS] = {
       {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false},
       {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false}};
 
   struct Target targets[MAX_TARGETS];
 
+  srand(time(0));
+
   for (int i = 0; i < MAX_TARGETS; ++i) {
     targets[i].x = 0;
     targets[i].y = AVERAGE_TARGET_HEIGHT;
+    targets[i].multiplier = rand() % 5 + 1;
   }
 
   double angle = 90.0 * (M_PI / 180.0);
@@ -174,15 +172,12 @@ int main() {
     draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
     draw_score(bullet_counter, enemies_hit_counter);
 
-    for (int k = 0; k < MAX_TARGETS; ++k) {
-      for (int j = 0; j < MAX_TARGETS; ++j) {
-        targets[j].y = targets[j].y * target_multipliers[k];
-        draw_target(targets[j].x, targets[j].y);
-        move_target(&targets[j].x, &targets[j].y);
+    for (int j = 0; j < MAX_TARGETS; ++j) {
+      draw_target(targets[j].x, targets[j].y);
+      move_target(&targets[j].x, &targets[j].y, targets[j].multiplier);
 
-        if (targets[j].x > gfx_screenWidth()) {
-          targets[j].x = 0;
-        }
+      if (targets[j].x > gfx_screenWidth()) {
+        targets[j].x = 0;
       }
     }
 
