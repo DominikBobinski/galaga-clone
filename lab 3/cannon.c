@@ -17,9 +17,8 @@
 #define SCOREBOARD_WIDTH 150
 #define SCOREBOARD_HEIGHT 70
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
-#define MAX_TARGETS 3
-// for loop that adds new enemies multiply by random from range [0-1], if 1
-// then new enemy appears, still respecting MAX_TARGETS
+#define MAX_TARGETS 6
+#define MAX_TARGET_WAIT_TIME 15;
 
 struct Bullet {
   int x;
@@ -33,6 +32,8 @@ struct Target {
   int x;
   int y;
   int multiplier;
+  bool visible;
+  int time_to_appear;
 };
 
 // Sets the initial bullet-cannon distance and the bullet angle.
@@ -128,10 +129,13 @@ int main() {
 
   srand(time(0));
 
+  time_t reference_time = time(NULL);
+
   for (int i = 0; i < MAX_TARGETS; ++i) {
     targets[i].x = 0;
     targets[i].y = AVERAGE_TARGET_HEIGHT;
     targets[i].multiplier = rand() % 5 + 1;
+    targets[i].time_to_appear = rand() % MAX_TARGET_WAIT_TIME;
   }
 
   double angle = 90.0 * (M_PI / 180.0);
@@ -172,9 +176,16 @@ int main() {
     draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
     draw_score(bullet_counter, enemies_hit_counter);
 
+    time_t current_time = time(NULL);
+
     for (int j = 0; j < MAX_TARGETS; ++j) {
-      draw_target(targets[j].x, targets[j].y);
-      move_target(&targets[j].x, &targets[j].y, targets[j].multiplier);
+      if (reference_time + targets[j].time_to_appear - current_time == 0) {
+        targets[j].visible = true;
+      }
+      if (targets[j].visible == true) {
+        draw_target(targets[j].x, targets[j].y);
+        move_target(&targets[j].x, &targets[j].y, targets[j].multiplier);
+      }
 
       if (targets[j].x > gfx_screenWidth()) {
         targets[j].x = 0;
