@@ -3,8 +3,6 @@
 #include <SDL2/SDL_keycode.h>
 #include <math.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 
 #define INITIAL_BULLET_DISTANCE_FROM_CANNON 170
