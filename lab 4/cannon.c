@@ -17,6 +17,7 @@
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
 #define MAX_TARGETS 6
 #define MAX_TARGET_WAIT_TIME 15
+#define CANNON_SPEED 2
 
 struct Bullet {
   int x;
@@ -214,11 +215,11 @@ int main() {
     }
 
     if (gfx_isKeyDown(SDLK_RIGHT)) {
-      cannon_position += 1;
+      cannon_position += CANNON_SPEED;
     }
 
     if (gfx_isKeyDown(SDLK_LEFT)) {
-      cannon_position -= 1;
+      cannon_position -= CANNON_SPEED;
     }
 
     set_cannon_boundary(&cannon_position);
