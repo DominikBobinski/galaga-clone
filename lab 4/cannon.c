@@ -77,7 +77,7 @@ void draw_explosion(int x_target, int y_target, int scale) {
 
 void draw_bckg_and_cannon(int x1_barrel, int y1_barrel, int x2_barrel,
                           int y2_barrel, int cannon_position) {
-  gfx_filledRect(0, 0, gfx_screenWidth() - 1, gfx_screenHeight() - 1, BLUE);
+  gfx_filledRect(0, 0, gfx_screenWidth() - 1, gfx_screenHeight() - 1, BLACK);
   gfx_filledCircle(gfx_screenWidth() / 2 + cannon_position, gfx_screenHeight(),
                    100, YELLOW);
   gfx_filledTriangle(gfx_screenWidth() / 2 + cannon_position,
