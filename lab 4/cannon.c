@@ -27,9 +27,9 @@ struct Bullet {
 };
 
 struct Target {
-  int x;
-  int y;
-  int multiplier;
+  float x;
+  float y;
+  float multiplier;
   bool visible;
   int time_to_appear;
   bool is_exploding;
@@ -47,12 +47,12 @@ void draw_target(int x_target, int y_target) {
   gfx_filledCircle(x_target, y_target, 10, MAGENTA);
 }
 
-void move_target(int *x_target, int *y_target, int target_multiplier) {
+void move_target(float *x_target, float *y_target, float target_multiplier) {
   const int y_amplitude = 20;
   const double vertical_displacement = y_amplitude * sin(*x_target * 0.02);
   *y_target =
       (AVERAGE_TARGET_HEIGHT + vertical_displacement) * target_multiplier;
-  *x_target += TARGET_VELOCITY;
+  *x_target += TARGET_VELOCITY + target_multiplier * 0.1;
 }
 
 // Removes the bullet that hit a target.
