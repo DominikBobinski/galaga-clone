@@ -45,7 +45,29 @@ void shoot(struct Bullet *bullet, int cannon_position) {
 }
 
 void draw_target(int x_target, int y_target) {
-  gfx_filledCircle(x_target, y_target, 10, MAGENTA);
+  gfx_filledCircle(x_target, y_target, 12, GREEN);
+  gfx_filledCircle(x_target, y_target - 2, 4, WHITE);
+  gfx_filledCircle(x_target, y_target - 1, 2, BLACK);
+
+  gfx_line(x_target - 5, y_target - 7, x_target - 1, y_target - 6, BLACK);
+  gfx_line(x_target + 5, y_target - 7, x_target + 1, y_target - 6, BLACK);
+
+  gfx_filledTriangle(x_target - 12, y_target, x_target - 1, y_target + 13,
+                     x_target - 6, y_target + 18, GREEN);
+  gfx_filledTriangle(x_target + 12, y_target, x_target + 1, y_target + 13,
+                     x_target + 6, y_target + 18, GREEN);
+
+  gfx_filledTriangle(x_target - 3, y_target + 12, x_target + 3, y_target + 12,
+                     x_target, y_target + 15, WHITE);
+  gfx_filledTriangle(x_target - 7, y_target + 16, x_target - 4, y_target + 16,
+                     x_target - 2, y_target + 18, WHITE);
+  gfx_filledTriangle(x_target + 7, y_target + 16, x_target + 4, y_target + 16,
+                     x_target + 2, y_target + 18, WHITE);
+
+  gfx_filledTriangle(x_target - 6, y_target + 11, x_target - 1, y_target + 13,
+                     x_target - 6, y_target + 20, RED);
+  gfx_filledTriangle(x_target + 6, y_target + 11, x_target + 1, y_target + 13,
+                     x_target + 6, y_target + 20, RED);
 }
 
 void move_target(float *x_target, float *y_target, float target_multiplier) {
@@ -91,7 +113,8 @@ void draw_bckg_and_cannon(int x1_barrel, int y1_barrel, int x2_barrel,
 void draw_bullet(int x_bullet, int y_bullet) {
   gfx_filledCircle(x_bullet, y_bullet + 25, 8, RED);
   gfx_filledCircle(x_bullet, y_bullet + 25, 5, YELLOW);
-  gfx_filledRect(x_bullet - 6, y_bullet - 5, x_bullet + 6, y_bullet + 25, WHITE);
+  gfx_filledRect(x_bullet - 6, y_bullet - 5, x_bullet + 6, y_bullet + 25,
+                 WHITE);
   gfx_filledTriangle(x_bullet - 10, y_bullet + 25, x_bullet + 10, y_bullet + 25,
                      x_bullet, y_bullet, WHITE);
   gfx_filledTriangle(x_bullet - 9, y_bullet - 5, x_bullet + 9, y_bullet - 5,
