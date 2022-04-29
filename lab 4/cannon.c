@@ -154,10 +154,10 @@ int main() {
 
   int cannon_position = 0;
 
-  int x1_barrel;
-  int y1_barrel;
-  int x2_barrel;
-  int y2_barrel;
+  const int x1_barrel = 150 * cos(90.0 * (M_PI / 180.0));
+  const int y1_barrel = 150 * sin(90.0 * (M_PI / 180.0));
+  const int x2_barrel = 150 * cos(90.0 * (M_PI / 180.0));
+  const int y2_barrel = 150 * sin(90.0 * (M_PI / 180.0));
 
   int explosion_frame_counter = 0;
 
@@ -169,11 +169,6 @@ int main() {
   while (1) {
     if (gfx_pollkey() == SDLK_SPACE)
       should_shoot = true;
-
-    x1_barrel = 150 * cos(90.0 * (M_PI / 180.0));
-    y1_barrel = 150 * sin(90.0 * (M_PI / 180.0));
-    x2_barrel = 150 * cos(90.0 * (M_PI / 180.0));
-    y2_barrel = 150 * sin(90.0 * (M_PI / 180.0));
 
     if (bullet_counter >= max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
       bullet_counter = 0;
