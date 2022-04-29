@@ -74,8 +74,8 @@ void draw_explosion(int x_target, int y_target, int scale) {
   gfx_circle(x_target, y_target, 3 * scale / 4, YELLOW);
 }
 
-void draw_scene(int x1_barrel, int y1_barrel, int x2_barrel, int y2_barrel,
-                int cannon_position) {
+void draw_bckg_and_cannon(int x1_barrel, int y1_barrel, int x2_barrel,
+                          int y2_barrel, int cannon_position) {
   gfx_filledRect(0, 0, gfx_screenWidth() - 1, gfx_screenHeight() - 1, BLUE);
   gfx_filledCircle(gfx_screenWidth() / 2 + cannon_position, gfx_screenHeight(),
                    100, YELLOW);
@@ -119,6 +119,15 @@ int max_num_from_digits(int digits) {
     max_num = max_num * 10 + 9;
   }
   return max_num;
+}
+
+void set_cannon_boundary(int *cannon_position) {
+  if (gfx_screenWidth() / 2 + *cannon_position <= 0) {
+    *cannon_position = -(gfx_screenWidth() / 2);
+  }
+  if (gfx_screenWidth() / 2 + *cannon_position >= gfx_screenWidth()) {
+    *cannon_position = gfx_screenWidth() / 2;
+  }
 }
 
 int main() {
@@ -175,7 +184,8 @@ int main() {
       enemies_hit_counter = 0;
     }
 
-    draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel, cannon_position);
+    draw_bckg_and_cannon(x1_barrel, y1_barrel, x2_barrel, y2_barrel,
+                         cannon_position);
     draw_score(bullet_counter, enemies_hit_counter);
 
     time_t current_time = time(NULL);
@@ -215,6 +225,8 @@ int main() {
     if (gfx_isKeyDown(SDLK_LEFT)) {
       cannon_position -= 1;
     }
+
+    set_cannon_boundary(&cannon_position);
 
     if (should_shoot == true) {
       if (bullets[0].visible == false) {
