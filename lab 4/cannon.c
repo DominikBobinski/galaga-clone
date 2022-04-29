@@ -21,7 +21,7 @@
 struct Bullet {
   int x;
   int y;
-  double fire_angle;
+  double fire_position;
   double distance;
   bool visible;
 };
@@ -38,9 +38,9 @@ struct Target {
 };
 
 // Sets the initial bullet-cannon distance and the bullet angle.
-void shoot(struct Bullet *bullet, double angle) {
+void shoot(struct Bullet *bullet, int cannon_position) {
   bullet->distance = INITIAL_BULLET_DISTANCE_FROM_CANNON;
-  bullet->fire_angle = angle;
+  bullet->fire_position = cannon_position;
 }
 
 void draw_target(int x_target, int y_target) {
@@ -74,13 +74,16 @@ void draw_explosion(int x_target, int y_target, int scale) {
   gfx_circle(x_target, y_target, 3 * scale / 4, YELLOW);
 }
 
-void draw_scene(int x1_barrel, int y1_barrel, int x2_barrel, int y2_barrel) {
+void draw_scene(int x1_barrel, int y1_barrel, int x2_barrel, int y2_barrel,
+                int cannon_position) {
   gfx_filledRect(0, 0, gfx_screenWidth() - 1, gfx_screenHeight() - 1, BLUE);
-  gfx_filledCircle(gfx_screenWidth() / 2, gfx_screenHeight(), 100, YELLOW);
-  gfx_filledTriangle(gfx_screenWidth() / 2, gfx_screenHeight(),
-                     gfx_screenWidth() / 2 + x1_barrel,
+  gfx_filledCircle(gfx_screenWidth() / 2 + cannon_position, gfx_screenHeight(),
+                   100, YELLOW);
+  gfx_filledTriangle(gfx_screenWidth() / 2 + cannon_position,
+                     gfx_screenHeight(),
+                     gfx_screenWidth() / 2 + x1_barrel + cannon_position,
                      gfx_screenHeight() - y1_barrel,
-                     gfx_screenWidth() / 2 + x2_barrel,
+                     gfx_screenWidth() / 2 + x2_barrel + cannon_position,
                      gfx_screenHeight() - y2_barrel, YELLOW);
 }
 
@@ -123,8 +126,8 @@ int main() {
     exit(3);
 
   struct Bullet bullets[MAX_BULLETS] = {
-      {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false},
-      {.x = 0, .y = 0, .fire_angle = 0, .distance = 0, .visible = false}};
+      {.x = 0, .y = 0, .fire_position = 0, .distance = 0, .visible = false},
+      {.x = 0, .y = 0, .fire_position = 0, .distance = 0, .visible = false}};
 
   struct Target targets[MAX_TARGETS];
 
@@ -140,8 +143,7 @@ int main() {
     targets[i].is_exploding = false;
   }
 
-  double angle = 90.0 * (M_PI / 180.0);
-  const double delta_angle = 2.0 * (M_PI / 180.0);
+  int cannon_position = 0;
 
   int x1_barrel;
   int y1_barrel;
@@ -159,10 +161,10 @@ int main() {
     if (gfx_pollkey() == SDLK_SPACE)
       should_shoot = true;
 
-    x1_barrel = 150 * cos(angle - delta_angle);
-    y1_barrel = 150 * sin(angle - delta_angle);
-    x2_barrel = 150 * cos(angle + delta_angle);
-    y2_barrel = 150 * sin(angle + delta_angle);
+    x1_barrel = 150 * cos(90.0 * (M_PI / 180.0));
+    y1_barrel = 150 * sin(90.0 * (M_PI / 180.0));
+    x2_barrel = 150 * cos(90.0 * (M_PI / 180.0));
+    y2_barrel = 150 * sin(90.0 * (M_PI / 180.0));
 
     if (bullet_counter >= max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
       bullet_counter = 0;
@@ -173,7 +175,7 @@ int main() {
       enemies_hit_counter = 0;
     }
 
-    draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel);
+    draw_scene(x1_barrel, y1_barrel, x2_barrel, y2_barrel, cannon_position);
     draw_score(bullet_counter, enemies_hit_counter);
 
     time_t current_time = time(NULL);
@@ -207,30 +209,28 @@ int main() {
     }
 
     if (gfx_isKeyDown(SDLK_RIGHT)) {
-      angle -= 1.0 * (M_PI / 180.0);
+      cannon_position += 1;
     }
 
     if (gfx_isKeyDown(SDLK_LEFT)) {
-      angle += 1.0 * (M_PI / 180.0);
+      cannon_position -= 1;
     }
 
     if (should_shoot == true) {
       if (bullets[0].visible == false) {
         bullets[0].visible = true;
-        shoot(&bullets[0], angle);
+        shoot(&bullets[0], cannon_position);
       } else if (bullets[1].visible == false) {
         bullets[1].visible = true;
-        shoot(&bullets[1], angle);
+        shoot(&bullets[1], cannon_position);
       }
       bullet_counter += 1;
       should_shoot = false;
     }
 
     for (int i = 0; i < MAX_BULLETS; ++i) {
-      bullets[i].x = gfx_screenWidth() / 2 +
-                     bullets[i].distance * cos(bullets[i].fire_angle);
-      bullets[i].y =
-          gfx_screenHeight() - bullets[i].distance * sin(bullets[i].fire_angle);
+      bullets[i].x = gfx_screenWidth() / 2 + bullets[i].fire_position;
+      bullets[i].y = gfx_screenHeight() - bullets[i].distance;
 
       if (bullets[i].visible == true) {
         draw_bullet(bullets[i].x, bullets[i].y);
