@@ -45,7 +45,18 @@ void shoot(struct Bullet *bullet, int cannon_position) {
 }
 
 void draw_target(int x_target, int y_target) {
+  gfx_circle(x_target, y_target, 15, GREEN);
   gfx_filledCircle(x_target, y_target, 12, GREEN);
+
+  gfx_filledTriangle(x_target + 6, y_target - 6, x_target + 10, y_target - 1,
+                     x_target + 15, y_target - 10, GREEN);
+  gfx_filledTriangle(x_target - 6, y_target - 6, x_target - 10, y_target - 1,
+                     x_target - 15, y_target - 10, GREEN);
+  gfx_filledTriangle(x_target + 2, y_target - 4, x_target + 6, y_target + 2,
+                     x_target + 6, y_target - 16, GREEN);
+  gfx_filledTriangle(x_target - 2, y_target - 4, x_target - 6, y_target + 2,
+                     x_target - 6, y_target - 16, GREEN);
+
   gfx_filledCircle(x_target, y_target - 2, 4, WHITE);
   gfx_filledCircle(x_target, y_target - 1, 2, BLACK);
 
