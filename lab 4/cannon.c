@@ -227,6 +227,8 @@ int main() {
   int bullet_counter = 0;
   int enemies_hit_counter = 0;
 
+  float target_scales[4] = {1, 1.5, 2, 2.5};
+
   while (1) {
     if (gfx_pollkey() == SDLK_SPACE)
       should_shoot = true;
@@ -246,18 +248,12 @@ int main() {
 
     time_t current_time = time(NULL);
 
-    float scale[4];
-    scale[0] = 1;
-    scale[1] = 1.5;
-    scale[2] = 2;
-    scale[3] = 2.5;
-
     for (int j = 0; j < MAX_TARGETS; ++j) {
       if (reference_time + targets[j].time_to_appear - current_time == 0) {
         targets[j].visible = true;
       }
       if (targets[j].visible == true) {
-        draw_target(targets[j].x, targets[j].y, scale[1]);
+        draw_target(targets[j].x, targets[j].y, target_scales[1]);
         move_target(&targets[j].x, &targets[j].y, targets[j].multiplier);
       }
 
