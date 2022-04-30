@@ -44,41 +44,54 @@ void shoot(struct Bullet *bullet, int cannon_position) {
   bullet->fire_position = cannon_position;
 }
 
-void draw_target(int x_target, int y_target) {
-  gfx_circle(x_target, y_target, 15, GREEN);
-  gfx_filledCircle(x_target, y_target, 12, GREEN);
+void draw_target(int x_target, int y_target, float scale) {
+  gfx_circle(x_target, y_target, 15 * scale, GREEN);
+  gfx_filledCircle(x_target, y_target, 12 * scale, GREEN);
 
-  gfx_filledTriangle(x_target + 6, y_target - 6, x_target + 10, y_target - 1,
-                     x_target + 15, y_target - 10, GREEN);
-  gfx_filledTriangle(x_target - 6, y_target - 6, x_target - 10, y_target - 1,
-                     x_target - 15, y_target - 10, GREEN);
-  gfx_filledTriangle(x_target + 2, y_target - 4, x_target + 6, y_target + 2,
-                     x_target + 6, y_target - 16, GREEN);
-  gfx_filledTriangle(x_target - 2, y_target - 4, x_target - 6, y_target + 2,
-                     x_target - 6, y_target - 16, GREEN);
+  gfx_filledTriangle(x_target + 6 * scale, y_target - 6 * scale,
+                     x_target + 10 * scale, y_target - 1 * scale,
+                     x_target + 15 * scale, y_target - 10 * scale, GREEN);
+  gfx_filledTriangle(x_target - 6 * scale, y_target - 6 * scale,
+                     x_target - 10 * scale, y_target - 1 * scale,
+                     x_target - 15 * scale, y_target - 10 * scale, GREEN);
+  gfx_filledTriangle(x_target + 2 * scale, y_target - 4 * scale,
+                     x_target + 6 * scale, y_target + 2 * scale,
+                     x_target + 6 * scale, y_target - 16 * scale, GREEN);
+  gfx_filledTriangle(x_target - 2 * scale, y_target - 4 * scale,
+                     x_target - 6 * scale, y_target + 2 * scale,
+                     x_target - 6 * scale, y_target - 16 * scale, GREEN);
 
-  gfx_filledCircle(x_target, y_target - 2, 4, WHITE);
-  gfx_filledCircle(x_target, y_target - 1, 2, BLACK);
+  gfx_filledCircle(x_target, y_target - 2 * scale, 4 * scale, WHITE);
+  gfx_filledCircle(x_target, y_target - 1 * scale, 2 * scale, BLACK);
 
-  gfx_line(x_target - 5, y_target - 7, x_target - 1, y_target - 6, BLACK);
-  gfx_line(x_target + 5, y_target - 7, x_target + 1, y_target - 6, BLACK);
+  gfx_line(x_target - 5 * scale, y_target - 7 * scale, x_target - 1 * scale,
+           y_target - 6 * scale, BLACK);
+  gfx_line(x_target + 5 * scale, y_target - 7 * scale, x_target + 1 * scale,
+           y_target - 6 * scale, BLACK);
 
-  gfx_filledTriangle(x_target - 12, y_target, x_target - 1, y_target + 13,
-                     x_target - 6, y_target + 18, GREEN);
-  gfx_filledTriangle(x_target + 12, y_target, x_target + 1, y_target + 13,
-                     x_target + 6, y_target + 18, GREEN);
+  gfx_filledTriangle(x_target - 12 * scale, y_target, x_target - 1 * scale,
+                     y_target + 13 * scale, x_target - 6 * scale,
+                     y_target + 18 * scale, GREEN);
+  gfx_filledTriangle(x_target + 12 * scale, y_target, x_target + 1 * scale,
+                     y_target + 13 * scale, x_target + 6 * scale,
+                     y_target + 18 * scale, GREEN);
 
-  gfx_filledTriangle(x_target - 3, y_target + 12, x_target + 3, y_target + 12,
-                     x_target, y_target + 15, WHITE);
-  gfx_filledTriangle(x_target - 7, y_target + 16, x_target - 4, y_target + 16,
-                     x_target - 2, y_target + 18, WHITE);
-  gfx_filledTriangle(x_target + 7, y_target + 16, x_target + 4, y_target + 16,
-                     x_target + 2, y_target + 18, WHITE);
+  gfx_filledTriangle(x_target - 3 * scale, y_target + 12 * scale,
+                     x_target + 3 * scale, y_target + 12 * scale, x_target,
+                     y_target + 15 * scale, WHITE);
+  gfx_filledTriangle(x_target - 6 * scale, y_target + 16 * scale,
+                     x_target - 4 * scale, y_target + 16 * scale,
+                     x_target - 2 * scale, y_target + 18 * scale, WHITE);
+  gfx_filledTriangle(x_target + 6 * scale, y_target + 16 * scale,
+                     x_target + 4 * scale, y_target + 16 * scale,
+                     x_target + 2 * scale, y_target + 18 * scale, WHITE);
 
-  gfx_filledTriangle(x_target - 6, y_target + 11, x_target - 1, y_target + 13,
-                     x_target - 6, y_target + 20, RED);
-  gfx_filledTriangle(x_target + 6, y_target + 11, x_target + 1, y_target + 13,
-                     x_target + 6, y_target + 20, RED);
+  gfx_filledTriangle(x_target - 6 * scale, y_target + 11 * scale,
+                     x_target - 1 * scale, y_target + 13 * scale,
+                     x_target - 6 * scale, y_target + 20 * scale, RED);
+  gfx_filledTriangle(x_target + 6 * scale, y_target + 11 * scale,
+                     x_target + 1 * scale, y_target + 13 * scale,
+                     x_target + 6 * scale, y_target + 20 * scale, RED);
 }
 
 void move_target(float *x_target, float *y_target, float target_multiplier) {
@@ -226,12 +239,18 @@ int main() {
 
     time_t current_time = time(NULL);
 
+    float scale[4];
+    scale[0] = 1;
+    scale[1] = 1.5;
+    scale[2] = 2;
+    scale[3] = 2.5;
+
     for (int j = 0; j < MAX_TARGETS; ++j) {
       if (reference_time + targets[j].time_to_appear - current_time == 0) {
         targets[j].visible = true;
       }
       if (targets[j].visible == true) {
-        draw_target(targets[j].x, targets[j].y);
+        draw_target(targets[j].x, targets[j].y, scale[1]);
         move_target(&targets[j].x, &targets[j].y, targets[j].multiplier);
       }
 
