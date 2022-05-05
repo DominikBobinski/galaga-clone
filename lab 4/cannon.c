@@ -126,21 +126,74 @@ void draw_background() {
 
 void draw_cannon(int x1_barrel, int y1_barrel, int x2_barrel, int y2_barrel,
                  int cannon_position) {
-  gfx_filledCircle(gfx_screenWidth() / 2 + cannon_position, gfx_screenHeight(),
-                   100, YELLOW);
-  gfx_filledTriangle(gfx_screenWidth() / 2 + cannon_position,
-                     gfx_screenHeight(),
-                     gfx_screenWidth() / 2 + x1_barrel + cannon_position,
-                     gfx_screenHeight() - y1_barrel,
-                     gfx_screenWidth() / 2 + x2_barrel + cannon_position,
-                     gfx_screenHeight() - y2_barrel, YELLOW);
+  int relative_x = gfx_screenWidth() / 2 + cannon_position;
+  int relative_y = gfx_screenHeight() - 50;
+
+ // gfx_filledTriangle(relative_x - 20, relative_y - 40, relative_x + 20,
+  //                   relative_y - 40, relative_x + 30, relative_y, BLUE);
+ // gfx_filledTriangle(relative_x - 30, relative_y, relative_x + 30, relative_y,
+ //                    relative_x - 20, relative_y - 40, BLUE);
+
+ // gfx_filledTriangle(relative_x - 50, relative_y - 20, relative_x + 50,
+ //                    relative_y - 20, relative_x + 65, relative_y, BLUE);
+  // gfx_filledTriangle(relative_x - 30, relative_y, relative_x + 30,
+  // relative_y,
+  //                    relative_x - 20, relative_y - 40, BLUE);
+
+  gfx_filledTriangle(relative_x - 20, relative_y - 40, relative_x + 20,
+                     relative_y - 40, relative_x + 30, relative_y, BLUE);
+  gfx_filledTriangle(relative_x - 30, relative_y, relative_x + 30, relative_y,
+                     relative_x - 20, relative_y - 40, BLUE);
+
+  gfx_filledCircle(relative_x, relative_y - 5, 30, BLUE);
+
+  gfx_filledTriangle(relative_x - 15, relative_y + 25, relative_x + 15,
+                     relative_y + 25, relative_x, relative_y + 50, YELLOW);
+
+  gfx_filledTriangle(relative_x - 65, relative_y - 30, relative_x + 65,
+                     relative_y - 30, relative_x, relative_y + 40, BLUE);
+
+  gfx_filledTriangle(relative_x - 10, relative_y + 25, relative_x + 10,
+                     relative_y + 25, relative_x, relative_y + 45, RED);
+  gfx_filledCircle(relative_x, relative_y + 30, 8, RED);
+
+  gfx_filledTriangle(relative_x - 20, relative_y + 20, relative_x - 9,
+                     relative_y + 20, relative_x - 6, relative_y + 35, BLUE);
+  gfx_filledTriangle(relative_x + 20, relative_y + 20, relative_x + 9,
+                     relative_y + 20, relative_x + 6, relative_y + 35, BLUE);
+
+  gfx_filledRect(relative_x - 50, relative_y - 20, relative_x - 45,
+                 relative_y + 5, WHITE);
+  gfx_filledTriangle(relative_x - 50, relative_y + 5, relative_x - 45,
+                     relative_y + 5, relative_x - 47, relative_y + 11, WHITE);
+
+  gfx_filledRect(relative_x - 30, relative_y - 5, relative_x - 25,
+                 relative_y + 15, WHITE);
+  gfx_filledTriangle(relative_x - 30, relative_y + 15, relative_x - 25,
+                     relative_y + 15, relative_x - 27, relative_y + 31, WHITE);
+
+  gfx_filledRect(relative_x + 50, relative_y - 20, relative_x + 45,
+                 relative_y + 5, WHITE);
+  gfx_filledTriangle(relative_x + 50, relative_y + 5, relative_x + 45,
+                     relative_y + 5, relative_x + 47, relative_y + 11, WHITE);
+
+  gfx_filledRect(relative_x + 30, relative_y - 5, relative_x + 25,
+                 relative_y + 15, WHITE);
+  gfx_filledTriangle(relative_x + 30, relative_y + 15, relative_x + 25,
+                     relative_y + 15, relative_x + 27, relative_y + 31, WHITE);
+
+  gfx_filledTriangle(relative_x - 40, relative_y - 20, relative_x + 40,
+                     relative_y - 20, relative_x + 10, relative_y + 10, WHITE);
+  gfx_filledTriangle(relative_x - 10, relative_y + 10, relative_x + 10,
+                     relative_y + 10, relative_x - 40, relative_y - 20, WHITE);
+
+  // gfx_filledCircle(relative_x, relative_y, 10, RED);
 }
 
 void draw_bullet(int x_bullet, int y_bullet) {
   gfx_filledCircle(x_bullet, y_bullet + 25, 8, RED);
   gfx_filledCircle(x_bullet, y_bullet + 25, 5, YELLOW);
-  gfx_filledRect(x_bullet - 6, y_bullet - 5, x_bullet + 6, y_bullet + 25,
-                 WHITE);
+  gfx_filledRect(x_bullet - 6, y_bullet - 5, x_bullet + 6, y_bullet + 25, WHITE);
   gfx_filledTriangle(x_bullet - 10, y_bullet + 25, x_bullet + 10, y_bullet + 25,
                      x_bullet, y_bullet, WHITE);
   gfx_filledTriangle(x_bullet - 9, y_bullet - 5, x_bullet + 9, y_bullet - 5,
