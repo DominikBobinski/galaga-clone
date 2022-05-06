@@ -39,7 +39,7 @@ struct Target {
 
 struct Star {
   int x;
-  int y;
+  float y;
   int velocity;
 };
 
@@ -260,16 +260,16 @@ void set_cannon_boundary(int *cannon_position) {
   }
 }
 
-void generate_star_pattern(int *star_x, int *star_y) {
+void generate_star_pattern(int *star_x, float *star_y) {
   *star_x = rand() % gfx_screenWidth();
   *star_y = rand() % gfx_screenHeight();
 }
 
-void draw_stars(int x, int y) {
+void draw_stars(int x, float y) {
   gfx_filledRect(x - 1, y - 1, x + 1, y + 1, WHITE);
 }
 
-void move_stars(int *star_y, int *star_velocity) { *star_y += *star_velocity; }
+void move_stars(float *star_y, int *star_velocity) { *star_y += *star_velocity; }
 
 int main() {
   if (gfx_init())
