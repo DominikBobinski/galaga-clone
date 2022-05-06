@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define INITIAL_BULLET_DISTANCE_FROM_CANNON 170
+#define INITIAL_BULLET_DISTANCE_FROM_CANNON 110
 #define MAX_BULLETS 2
 #define MIN_DISTANCE_FOR_HIT 27
 #define EXPLOSION_FRAMES 20
@@ -15,7 +15,7 @@
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
 #define MAX_TARGETS 6
 #define MAX_TARGET_WAIT_TIME 15
-#define CANNON_SPEED 2
+#define CANNON_SPEED 4
 
 struct Bullet {
   int x;
