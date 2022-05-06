@@ -49,7 +49,7 @@ void shoot(struct Bullet *bullet, int cannon_position) {
   bullet->fire_position = cannon_position;
 }
 
-void draw_target(int x_target, int y_target, float scale) {
+void draw_target(float x_target, float y_target, float scale) {
   gfx_circle(x_target, y_target, 15 * scale, GREEN);
   gfx_filledCircle(x_target, y_target, 12 * scale, GREEN);
 
@@ -111,17 +111,17 @@ void move_target(float *x_target, float *y_target, float target_multiplier) {
 void destroy_bullet(bool *bullet) { *bullet = false; }
 
 // Resets the target's position.
-void destroy_target(int *x_target) { *x_target = 0; }
+void destroy_target(float *x_target) { *x_target = 0; }
 
 // Detects if a bullet came in contact with a target, returns true or false.
-bool is_hit(int x_target, int y_target, int bullet_x, int bullet_y) {
+bool is_hit(float x_target, float y_target, int bullet_x, int bullet_y) {
   double bullet_to_enemy_distance =
       hypot((x_target - bullet_x), (y_target - bullet_y));
 
   return bullet_to_enemy_distance <= MIN_DISTANCE_FOR_HIT;
 }
 
-void draw_explosion(int x_target, int y_target, int scale) {
+void draw_explosion(float x_target, float y_target, int scale) {
   gfx_circle(x_target, y_target, 5 * scale / 2, RED);
   gfx_circle(x_target, y_target, 3 * scale / 4, YELLOW);
 }
