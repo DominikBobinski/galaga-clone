@@ -221,8 +221,8 @@ bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
 }
 
 void draw_stats(int bullet_counter, int enemies_hit_counter) {
-  char bullets_shot_text[14] = "Bullets shot:";
-  char enemies_hit_text[13] = "Enemies hit:";
+  const char bullets_shot_text[14] = "Bullets shot:";
+  const char enemies_hit_text[13] = "Enemies hit:";
   char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
   char enemies_hit_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
 
