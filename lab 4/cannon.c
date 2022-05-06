@@ -198,14 +198,16 @@ void draw_cannon(int x1_barrel, int y1_barrel, int x2_barrel, int y2_barrel,
 }
 
 void draw_bullet(int x_bullet, int y_bullet) {
-  gfx_filledCircle(x_bullet, y_bullet + 25, 8, RED);
-  gfx_filledCircle(x_bullet, y_bullet + 25, 5, YELLOW);
-  gfx_filledRect(x_bullet - 6, y_bullet - 5, x_bullet + 6, y_bullet + 25,
-                 WHITE);
-  gfx_filledTriangle(x_bullet - 10, y_bullet + 25, x_bullet + 10, y_bullet + 25,
+  gfx_filledTriangle(x_bullet - 12, y_bullet + 16, x_bullet + 12, y_bullet + 16,
                      x_bullet, y_bullet, WHITE);
-  gfx_filledTriangle(x_bullet - 9, y_bullet - 5, x_bullet + 9, y_bullet - 5,
-                     x_bullet, y_bullet - 15, WHITE);
+
+  gfx_filledCircle(x_bullet, y_bullet + 14, 10, CYAN);
+  gfx_filledCircle(x_bullet, y_bullet + 14, 7, MAGENTA);
+  gfx_filledCircle(x_bullet, y_bullet + 14, 4, YELLOW);
+  gfx_circle(x_bullet, y_bullet + 14, 4, BLACK);
+
+  gfx_circle(x_bullet, y_bullet + 25, 6, MAGENTA);
+  gfx_circle(x_bullet, y_bullet + 27, 3, MAGENTA);
 }
 
 bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
