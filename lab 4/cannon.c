@@ -124,8 +124,7 @@ void draw_background() {
   gfx_filledRect(0, 0, gfx_screenWidth() - 1, gfx_screenHeight() - 1, BLACK);
 }
 
-void draw_cannon(int x1_barrel, int y1_barrel, int x2_barrel, int y2_barrel,
-                 int cannon_position) {
+void draw_cannon(int cannon_position) {
   int relative_x = gfx_screenWidth() / 2 + cannon_position;
   int relative_y = gfx_screenHeight() - 50;
 
@@ -278,11 +277,6 @@ int main() {
 
   int cannon_position = 0;
 
-  const int x1_barrel = 150 * cos(90.0 * (M_PI / 180.0));
-  const int y1_barrel = 150 * sin(90.0 * (M_PI / 180.0));
-  const int x2_barrel = 150 * cos(90.0 * (M_PI / 180.0));
-  const int y2_barrel = 150 * sin(90.0 * (M_PI / 180.0));
-
   int explosion_frame_counter = 0;
 
   bool should_shoot = false;
@@ -307,7 +301,7 @@ int main() {
 
     draw_background();
     draw_stats(bullet_counter, enemies_hit_counter);
-    draw_cannon(x1_barrel, y1_barrel, x2_barrel, y2_barrel, cannon_position);
+    draw_cannon(cannon_position);
 
     time_t current_time = time(NULL);
 
