@@ -221,11 +221,6 @@ bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
 }
 
 void draw_stats(int bullet_counter, int enemies_hit_counter) {
-  gfx_line(0, gfx_screenHeight() - 60, gfx_screenWidth(),
-           gfx_screenHeight() - 60, WHITE);
-  gfx_line(0, gfx_screenHeight() - 57, gfx_screenWidth(),
-           gfx_screenHeight() - 57, WHITE);
-
   char bullets_shot_text[14] = "Bullets shot:";
   char enemies_hit_text[13] = "Enemies hit:";
   char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
