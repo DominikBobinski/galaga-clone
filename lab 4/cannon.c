@@ -127,7 +127,6 @@ void draw_explosion(float x_target, float y_target, int scale) {
 }
 
 void draw_background() {
-
   gfx_filledRect(0, 0, gfx_screenWidth() - 1, gfx_screenHeight() - 1, BLACK);
 }
 
@@ -264,7 +263,9 @@ void draw_stars(int x, float y) {
   gfx_filledRect(x - 1, y - 1, x + 1, y + 1, WHITE);
 }
 
-void move_stars(float *star_y, int *star_velocity) { *star_y += *star_velocity; }
+void move_stars(float *star_y, int *star_velocity) {
+  *star_y += *star_velocity;
+}
 
 int main() {
   if (gfx_init())
