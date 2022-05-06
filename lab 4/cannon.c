@@ -16,6 +16,7 @@
 #define MAX_TARGETS 6
 #define MAX_TARGET_WAIT_TIME 15
 #define CANNON_SPEED 4
+#define STAR_AMOUNT 60
 
 struct Bullet {
   int x;
@@ -34,6 +35,12 @@ struct Target {
   bool is_exploding;
   int x_boom;
   int y_boom;
+};
+
+struct Star {
+  int x;
+  int y;
+  int velocity;
 };
 
 // Sets the initial bullet-cannon distance and the bullet angle.
@@ -253,6 +260,17 @@ void set_cannon_boundary(int *cannon_position) {
   }
 }
 
+void generate_star_pattern(int *star_x, int *star_y) {
+  *star_x = rand() % gfx_screenWidth();
+  *star_y = rand() % gfx_screenHeight();
+}
+
+void draw_stars(int x, int y) {
+  gfx_filledRect(x - 1, y - 1, x + 1, y + 1, WHITE);
+}
+
+void move_stars(int *star_y, int *star_velocity) { *star_y += *star_velocity; }
+
 int main() {
   if (gfx_init())
     exit(3);
@@ -263,9 +281,15 @@ int main() {
 
   struct Target targets[MAX_TARGETS];
 
-  srand(time(0));
+  struct Star stars[STAR_AMOUNT];
 
+  srand(time(0));
   time_t reference_time = time(NULL);
+
+  for (int i = 0; i < STAR_AMOUNT; ++i) {
+    generate_star_pattern(&stars[i].x, &stars[i].y);
+    stars[i].velocity = rand() % 5;
+  }
 
   for (int i = 0; i < MAX_TARGETS; ++i) {
     targets[i].x = 0;
@@ -300,6 +324,15 @@ int main() {
     }
 
     draw_background();
+
+    for (int i = 0; i < STAR_AMOUNT; ++i) {
+      draw_stars(stars[i].x, stars[i].y);
+      move_stars(&stars[i].y, &stars[i].velocity);
+      if (stars[i].y >= gfx_screenHeight()) {
+        stars[i].y = 0;
+      }
+    }
+
     draw_stats(bullet_counter, enemies_hit_counter);
     draw_cannon(cannon_position);
 
