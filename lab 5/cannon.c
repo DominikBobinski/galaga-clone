@@ -6,7 +6,7 @@
 #include <time.h>
 
 #define INITIAL_BULLET_DISTANCE_FROM_CANNON 110
-#define MAX_BULLETS 2
+#define MAX_BULLETS 3
 #define MIN_DISTANCE_FOR_HIT 27
 #define EXPLOSION_FRAMES 20
 #define BULLET_VELOCITY 15
@@ -285,9 +285,7 @@ int main() {
   if (gfx_init())
     exit(3);
 
-  struct Bullet bullets[MAX_BULLETS] = {
-      {.x = 0, .y = 0, .fire_position = 0, .distance = 0, .visible = false},
-      {.x = 0, .y = 0, .fire_position = 0, .distance = 0, .visible = false}};
+  struct Bullet bullets[MAX_BULLETS];
 
   struct Target targets[MAX_TARGETS];
 
@@ -299,6 +297,13 @@ int main() {
 
   // Fetches the time at which the game starts.
   time_t reference_time = time(NULL);
+
+  for (int i = 0; i < MAX_BULLETS; ++i) {
+    bullets[i].x = 0;
+    bullets[i].y = 0;
+    bullets[i].fire_position = 0;
+    bullets[i].visible = false;
+  }
 
   /* Generates random coordinates for the given STAR_AMOUNT and gives each star
   a random velocity from the range <0, 4> */
@@ -397,13 +402,19 @@ int main() {
     set_cannon_boundary(&cannon_position);
 
     if (should_shoot == true) {
+      /* If more bullets are needed a new 'else if' segment has to be manually
+         added. */
       if (bullets[0].visible == false) {
         bullets[0].visible = true;
         shoot(&bullets[0], cannon_position);
       } else if (bullets[1].visible == false) {
         bullets[1].visible = true;
         shoot(&bullets[1], cannon_position);
+      } else if (bullets[2].visible == false) {
+        bullets[2].visible = true;
+        shoot(&bullets[2], cannon_position);
       }
+
       bullet_counter += 1;
       should_shoot = false;
     }
