@@ -47,6 +47,14 @@ struct Star {
   int velocity;
 };
 
+struct Target_bullet {
+  int y;
+  int x;
+  bool should_shoot;
+  int velocity;
+  bool is_visible;
+};
+
 // Sets the initial bullet-cannon distance and the bullet position.
 void shoot(struct Bullet *bullet, int cannon_position) {
   bullet->distance = INITIAL_BULLET_DISTANCE_FROM_CANNON;
@@ -281,6 +289,12 @@ void move_stars(float *star_y, int *star_velocity) {
   *star_y += *star_velocity;
 }
 
+void draw_target_bullet(int x, int y) { gfx_filledCircle(x, y, 10, RED); }
+
+bool player_is_hit(int bullet_x, int bullet_y, int cannon_position) {
+  return hypot((cannon_position - bullet_x), (80 - bullet_y)) <= 60;
+}
+
 int main() {
   if (gfx_init())
     exit(3);
@@ -292,6 +306,8 @@ int main() {
   struct Star stars[STAR_AMOUNT];
 
   struct Explosion explosions[MAX_TARGETS];
+
+  struct Target_bullet target_bullets[MAX_TARGETS];
 
   srand(time(0));
 
@@ -318,6 +334,12 @@ int main() {
     targets[i].y = AVERAGE_TARGET_HEIGHT;
     targets[i].multiplier = rand() % 5 + 1;
     targets[i].time_to_appear = rand() % MAX_TARGET_WAIT_TIME;
+
+    target_bullets[i].y = 0;
+    target_bullets[i].x = 0;
+    target_bullets[i].should_shoot = false;
+    target_bullets[i].velocity = 4;
+    target_bullets[i].is_visible = false;
 
     explosions[i].x = 0;
     explosions[i].y = 0;
@@ -372,13 +394,37 @@ int main() {
       if (reference_time + targets[j].time_to_appear - current_time == 0) {
         targets[j].visible = true;
       }
+
       if (targets[j].visible == true) {
         draw_target(targets[j].x, targets[j].y, target_scales[1]);
         move_target(&targets[j].x, &targets[j].y, targets[j].multiplier);
-      }
 
-      if (targets[j].x > gfx_screenWidth()) {
-        targets[j].x = 0;
+        if (rand() % 1000 < 10) {
+          target_bullets[j].should_shoot = true;
+        } else {
+          target_bullets[j].should_shoot = false;
+        }
+
+        if (target_bullets[j].should_shoot == true) {
+          target_bullets[j].is_visible = true;
+          target_bullets[j].x = targets[j].x;
+          target_bullets[j].y = targets[j].y;
+          target_bullets[j].should_shoot = false;
+        }
+
+        if (target_bullets[j].is_visible == true) {
+          draw_target_bullet(target_bullets[j].x, target_bullets[j].y);
+          target_bullets[j].y += target_bullets[j].velocity;
+        }
+        if (target_bullets[j].y >= gfx_screenHeight() ||
+            player_is_hit(target_bullets[j].x, target_bullets[j].y,
+                          cannon_position) == true) {
+          target_bullets[j].is_visible = false;
+        }
+
+        if (targets[j].x > gfx_screenWidth()) {
+          targets[j].x = 0;
+        }
       }
     }
 
