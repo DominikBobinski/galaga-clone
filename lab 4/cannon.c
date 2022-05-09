@@ -222,10 +222,12 @@ void draw_bullet(int x_bullet, int y_bullet) {
   gfx_circle(x_bullet, y_bullet + 27, 3, MAGENTA);
 }
 
+// Checks if the bullet left the screen, returns true or false.
 bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
   return bullet_y <= 0 || bullet_x <= 0 || bullet_x >= gfx_screenWidth();
 }
 
+// Draws the score table.
 void draw_stats(int bullet_counter, int enemies_hit_counter) {
   const char bullets_shot_text[14] = "Bullets shot:";
   const char enemies_hit_text[13] = "Enemies hit:";
@@ -244,6 +246,7 @@ void draw_stats(int bullet_counter, int enemies_hit_counter) {
               SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), WHITE);
 }
 
+// Calculates the maximum number avaible given the amount of digits.
 int max_num_from_digits(int digits) {
   int max_num = 0;
   for (int i = 0; i < digits; ++i) {
@@ -262,15 +265,18 @@ void set_cannon_boundary(int *cannon_position) {
   }
 }
 
+// Chooses random coordinates for a star to be placed in later on.
 void generate_star_pattern(int *star_x, float *star_y) {
   *star_x = rand() % gfx_screenWidth();
   *star_y = rand() % gfx_screenHeight();
 }
 
+// Draws a rectangular star at given coordinates.
 void draw_stars(int x, float y) {
   gfx_filledRect(x - 1, y - 1, x + 1, y + 1, WHITE);
 }
 
+// Moves the created stars along the Y direction.
 void move_stars(float *star_y, int *star_velocity) {
   *star_y += *star_velocity;
 }
@@ -290,13 +296,18 @@ int main() {
   struct Explosion explosions[MAX_TARGETS];
 
   srand(time(0));
+
+  // Fetches the time at which the game starts.
   time_t reference_time = time(NULL);
 
+  /* Generates random coordinates for the given STAR_AMOUNT and gives each star
+  a random velocity from the range <0, 4> */
   for (int i = 0; i < STAR_AMOUNT; ++i) {
     generate_star_pattern(&stars[i].x, &stars[i].y);
     stars[i].velocity = rand() % 5;
   }
 
+  // Initializes some variables of targets and explosions.
   for (int i = 0; i < MAX_TARGETS; ++i) {
     targets[i].x = 0;
     targets[i].y = AVERAGE_TARGET_HEIGHT;
@@ -316,6 +327,8 @@ int main() {
   int bullet_counter = 0;
   int enemies_hit_counter = 0;
 
+  /* Scales that can be used for target sizes. Have to be careful as they aren't
+     connectd in any way to the MIN_DISTANCE_FOR_HIT. */
   float target_scales[4] = {1, 1.5, 2, 2.5};
 
   while (1) {
@@ -333,6 +346,7 @@ int main() {
 
     draw_background();
 
+    // Star animation loop.
     for (int i = 0; i < STAR_AMOUNT; ++i) {
       draw_stars(stars[i].x, stars[i].y);
       move_stars(&stars[i].y, &stars[i].velocity);
@@ -344,8 +358,11 @@ int main() {
     draw_stats(bullet_counter, enemies_hit_counter);
     draw_cannon(cannon_position);
 
+    // Fetches the time at which the current frame is created.
     time_t current_time = time(NULL);
 
+    /* Target animation loop. In addition it controls the time at which a given
+       target should appear. */
     for (int j = 0; j < MAX_TARGETS; ++j) {
       if (reference_time + targets[j].time_to_appear - current_time == 0) {
         targets[j].visible = true;
@@ -360,6 +377,7 @@ int main() {
       }
     }
 
+    // Explosion animation loop.
     for (int j = 0; j < MAX_TARGETS; ++j) {
       explosions[j].scale = EXPLOSION_FRAMES - explosions[j].frames_left;
       if (explosions[j].frames_left != 0) {
@@ -390,6 +408,7 @@ int main() {
       should_shoot = false;
     }
 
+    // Bullet animating loop.
     for (int i = 0; i < MAX_BULLETS; ++i) {
       bullets[i].x = gfx_screenWidth() / 2 + bullets[i].fire_position;
       bullets[i].y = gfx_screenHeight() - bullets[i].distance;
@@ -403,6 +422,7 @@ int main() {
         bullets[i].visible = false;
       }
 
+      // Checks if any target was hit and provides approperiate consequences.
       for (int j = 0; j < MAX_TARGETS; ++j) {
         if (bullets[i].visible == true &&
             is_hit(targets[j].x, targets[j].y, bullets[i].x, bullets[i].y)) {
