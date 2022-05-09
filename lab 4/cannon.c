@@ -32,9 +32,13 @@ struct Target {
   float multiplier;
   bool visible;
   int time_to_appear;
-  bool is_exploding;
-  int x_boom;
-  int y_boom;
+};
+
+struct Explosion {
+  float x;
+  float y;
+  int frames_left;
+  int scale;
 };
 
 struct Star {
@@ -283,6 +287,8 @@ int main() {
 
   struct Star stars[STAR_AMOUNT];
 
+  struct Explosion explosions[MAX_TARGETS];
+
   srand(time(0));
   time_t reference_time = time(NULL);
 
@@ -296,12 +302,14 @@ int main() {
     targets[i].y = AVERAGE_TARGET_HEIGHT;
     targets[i].multiplier = rand() % 5 + 1;
     targets[i].time_to_appear = rand() % MAX_TARGET_WAIT_TIME;
-    targets[i].is_exploding = false;
+
+    explosions[i].x = 0;
+    explosions[i].y = 0;
+    explosions[i].frames_left = 0;
+    explosions[i].scale = 0;
   }
 
   int cannon_position = 0;
-
-  int explosion_frame_counter = 0;
 
   bool should_shoot = false;
 
@@ -352,17 +360,11 @@ int main() {
       }
     }
 
-    if (explosion_frame_counter != 0) {
-      int scale = EXPLOSION_FRAMES - explosion_frame_counter;
-      for (int j = 0; j < MAX_TARGETS; ++j) {
-        if (targets[j].is_exploding == true) {
-          draw_explosion(targets[j].x_boom, targets[j].y_boom, scale);
-        }
-      }
-      explosion_frame_counter -= 1;
-    } else {
-      for (int j = 0; j < MAX_TARGETS; ++j) {
-        targets[j].is_exploding = false;
+    for (int j = 0; j < MAX_TARGETS; ++j) {
+      explosions[j].scale = EXPLOSION_FRAMES - explosions[j].frames_left;
+      if (explosions[j].frames_left != 0) {
+        draw_explosion(explosions[j].x, explosions[j].y, explosions[j].scale);
+        explosions[j].frames_left -= 1;
       }
     }
 
@@ -407,13 +409,11 @@ int main() {
 
           enemies_hit_counter += 1;
 
-          targets[j].is_exploding = true;
-
-          targets[j].x_boom = targets[j].x;
-          targets[j].y_boom = targets[j].y;
+          explosions[j].x = targets[j].x;
+          explosions[j].y = targets[j].y;
+          explosions[j].frames_left = EXPLOSION_FRAMES;
 
           destroy_bullet(&bullets[i].visible);
-          explosion_frame_counter = EXPLOSION_FRAMES;
           destroy_target(&targets[j].x);
         }
       }
