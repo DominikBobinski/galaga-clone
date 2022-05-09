@@ -14,7 +14,7 @@
 #define AVERAGE_TARGET_HEIGHT 80
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
 #define MAX_TARGETS 6
-#define MAX_TARGET_WAIT_TIME 15
+#define MAX_TARGET_WAIT_TIME 15 // Sets time in seconds until target appears.
 #define CANNON_SPEED 4
 #define STAR_AMOUNT 60
 
@@ -43,7 +43,7 @@ struct Star {
   int velocity;
 };
 
-// Sets the initial bullet-cannon distance and the bullet angle.
+// Sets the initial bullet-cannon distance and the bullet position.
 void shoot(struct Bullet *bullet, int cannon_position) {
   bullet->distance = INITIAL_BULLET_DISTANCE_FROM_CANNON;
   bullet->fire_position = cannon_position;
@@ -99,6 +99,7 @@ void draw_target(float x_target, float y_target, float scale) {
                      x_target + 6 * scale, y_target + 20 * scale, RED);
 }
 
+// Move target in a sinusoid path.
 void move_target(float *x_target, float *y_target, float target_multiplier) {
   const int y_amplitude = 20;
   const double vertical_displacement = y_amplitude * sin(*x_target * 0.02);
@@ -110,7 +111,7 @@ void move_target(float *x_target, float *y_target, float target_multiplier) {
 // Removes the bullet that hit a target.
 void destroy_bullet(bool *bullet) { *bullet = false; }
 
-// Resets the target's position.
+// Resets the hit target's position.
 void destroy_target(float *x_target) { *x_target = 0; }
 
 // Detects if a bullet came in contact with a target, returns true or false.
@@ -131,6 +132,8 @@ void draw_background() {
 }
 
 void draw_cannon(int cannon_position) {
+  /* Additional relative coordinate system is needed because
+  the cannon starts it's movement from the center of the screen. */
   int relative_x = gfx_screenWidth() / 2 + cannon_position;
   int relative_y = gfx_screenHeight() - 50;
 
@@ -245,6 +248,7 @@ int max_num_from_digits(int digits) {
   return max_num;
 }
 
+// Limits the cannons movement to the screen width.
 void set_cannon_boundary(int *cannon_position) {
   if (gfx_screenWidth() / 2 + *cannon_position <= 0) {
     *cannon_position = -(gfx_screenWidth() / 2);
