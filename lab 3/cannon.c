@@ -3,8 +3,6 @@
 #include <SDL2/SDL_keycode.h>
 #include <math.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 
 #define INITIAL_BULLET_DISTANCE_FROM_CANNON 170
@@ -18,7 +16,7 @@
 #define SCOREBOARD_HEIGHT 70
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
 #define MAX_TARGETS 6
-#define MAX_TARGET_WAIT_TIME 15;
+#define MAX_TARGET_WAIT_TIME 15
 
 struct Bullet {
   int x;
@@ -34,6 +32,9 @@ struct Target {
   int multiplier;
   bool visible;
   int time_to_appear;
+  bool is_exploding;
+  int x_boom;
+  int y_boom;
 };
 
 // Sets the initial bullet-cannon distance and the bullet angle.
@@ -136,6 +137,7 @@ int main() {
     targets[i].y = AVERAGE_TARGET_HEIGHT;
     targets[i].multiplier = rand() % 5 + 1;
     targets[i].time_to_appear = rand() % MAX_TARGET_WAIT_TIME;
+    targets[i].is_exploding = false;
   }
 
   double angle = 90.0 * (M_PI / 180.0);
@@ -147,8 +149,6 @@ int main() {
   int y2_barrel;
 
   int explosion_frame_counter = 0;
-  int x_explosion = 0;
-  int y_explosion = 0;
 
   bool should_shoot = false;
 
@@ -194,8 +194,16 @@ int main() {
 
     if (explosion_frame_counter != 0) {
       int scale = EXPLOSION_FRAMES - explosion_frame_counter;
-      draw_explosion(x_explosion, y_explosion, scale);
+      for (int j = 0; j < MAX_TARGETS; ++j) {
+        if (targets[j].is_exploding == true) {
+          draw_explosion(targets[j].x_boom, targets[j].y_boom, scale);
+        }
+      }
       explosion_frame_counter -= 1;
+    } else {
+      for (int j = 0; j < MAX_TARGETS; ++j) {
+        targets[j].is_exploding = false;
+      }
     }
 
     if (gfx_isKeyDown(SDLK_RIGHT)) {
@@ -239,8 +247,10 @@ int main() {
 
           enemies_hit_counter += 1;
 
-          x_explosion = targets[j].x;
-          y_explosion = targets[j].y;
+          targets[j].is_exploding = true;
+
+          targets[j].x_boom = targets[j].x;
+          targets[j].y_boom = targets[j].y;
 
           destroy_bullet(&bullets[i].visible);
           explosion_frame_counter = EXPLOSION_FRAMES;
