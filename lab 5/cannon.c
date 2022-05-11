@@ -399,10 +399,18 @@ int main() {
         draw_target(targets[j].x, targets[j].y, target_scales[1]);
         move_target(&targets[j].x, &targets[j].y, targets[j].multiplier);
 
-        if (rand() % 1000 < 10) {
+        if (targets[j].x > gfx_screenWidth()) {
+          targets[j].x = 0;
+        }
+      }
+    }
+
+    // Targets' bullets loop
+    for (int j = 0; j < MAX_TARGETS; ++j) {
+      if (targets[j].visible == true) {
+
+        if (rand() % 2500 < 10 && target_bullets[j].is_visible == false) {
           target_bullets[j].should_shoot = true;
-        } else {
-          target_bullets[j].should_shoot = false;
         }
 
         if (target_bullets[j].should_shoot == true) {
@@ -414,16 +422,14 @@ int main() {
 
         if (target_bullets[j].is_visible == true) {
           draw_target_bullet(target_bullets[j].x, target_bullets[j].y);
-          target_bullets[j].y += target_bullets[j].velocity;
+          target_bullets[j].y +=
+              target_bullets[j].velocity; // moves targets' bullets
         }
+
         if (target_bullets[j].y >= gfx_screenHeight() ||
             player_is_hit(target_bullets[j].x, target_bullets[j].y,
                           cannon_position) == true) {
           target_bullets[j].is_visible = false;
-        }
-
-        if (targets[j].x > gfx_screenWidth()) {
-          targets[j].x = 0;
         }
       }
     }
