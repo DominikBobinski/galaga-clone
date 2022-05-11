@@ -17,6 +17,7 @@
 #define MAX_TARGET_WAIT_TIME 15 // Sets time in seconds until target appears.
 #define CANNON_SPEED 4
 #define STAR_AMOUNT 60
+#define CANNON_RELATIVE_Y (gfx_screenHeight() - 50)
 
 struct Bullet {
   int x;
@@ -147,7 +148,7 @@ void draw_cannon(int cannon_position) {
   /* Additional relative coordinate system is needed because
   the cannon starts it's movement from the center of the screen. */
   int relative_x = gfx_screenWidth() / 2 + cannon_position;
-  int relative_y = gfx_screenHeight() - 50;
+  int relative_y = CANNON_RELATIVE_Y;
 
   gfx_filledCircle(relative_x - 22, relative_y + 20, 10, YELLOW);
   gfx_circle(relative_x - 22, relative_y + 20, 12, RED);
@@ -292,7 +293,8 @@ void move_stars(float *star_y, int *star_velocity) {
 void draw_target_bullet(int x, int y) { gfx_filledCircle(x, y, 10, RED); }
 
 bool player_is_hit(int bullet_x, int bullet_y, int cannon_position) {
-  return hypot((cannon_position - bullet_x), (80 - bullet_y)) <= 60;
+  return hypot((cannon_position - bullet_x), (CANNON_RELATIVE_Y - bullet_y)) <=
+         120;
 }
 
 int main() {
