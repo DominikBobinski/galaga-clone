@@ -541,7 +541,7 @@ int main() {
           target_bullets_explosions[j].y = target_bullets[j].y;
           target_bullets_explosions[j].frames_left = EXPLOSION_FRAMES;
 
-          destroy_target_bullet(&target_bullets[i].is_visible);
+          destroy_target_bullet(&target_bullets[j].is_visible);
         }
       }
     }
