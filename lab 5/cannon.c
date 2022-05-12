@@ -309,6 +309,8 @@ bool player_is_hit(int bullet_x, int bullet_y, int cannon_position) {
                 (CANNON_RELATIVE_Y - bullet_y + 20)) <= 3);
 }
 
+void destroy_target_bullet(bool *bullet) { *bullet = false; }
+
 int main() {
   if (gfx_init())
     exit(3);
@@ -322,6 +324,8 @@ int main() {
   struct Explosion explosions[MAX_TARGETS];
 
   struct Target_bullet target_bullets[MAX_TARGETS];
+
+  struct Explosion target_bullets_explosions[MAX_TARGETS];
 
   srand(time(0));
 
@@ -359,6 +363,11 @@ int main() {
     explosions[i].y = 0;
     explosions[i].frames_left = 0;
     explosions[i].scale = 0;
+
+    target_bullets_explosions[i].x = 0;
+    target_bullets_explosions[i].y = 0;
+    target_bullets_explosions[i].frames_left = 0;
+    target_bullets_explosions[i].scale = 0;
   }
 
   /* The default position is in the center of the screen */
@@ -441,12 +450,12 @@ int main() {
           target_bullets[j].y +=
               target_bullets[j].velocity; // moves targets' bullets
         }
+      }
+    }
 
-        if (target_bullets[j].y >= gfx_screenHeight() ||
-            player_is_hit(target_bullets[j].x, target_bullets[j].y,
-                          cannon_position) == true) {
-          target_bullets[j].is_visible = false;
-        }
+    for (int j = 0; j < MAX_TARGETS; ++j) {
+      if (target_bullets[j].y >= gfx_screenHeight()) {
+        target_bullets[j].is_visible = false;
       }
     }
 
@@ -456,6 +465,15 @@ int main() {
       if (explosions[j].frames_left != 0) {
         draw_explosion(explosions[j].x, explosions[j].y, explosions[j].scale);
         explosions[j].frames_left -= 1;
+      }
+
+      target_bullets_explosions[j].scale =
+          EXPLOSION_FRAMES - target_bullets_explosions[j].frames_left;
+      if (target_bullets_explosions[j].frames_left != 0) {
+        draw_explosion(target_bullets_explosions[j].x,
+                       target_bullets_explosions[j].y,
+                       target_bullets_explosions[j].scale);
+        target_bullets_explosions[j].frames_left -= 1;
       }
     }
 
@@ -514,6 +532,16 @@ int main() {
 
           destroy_bullet(&bullets[i].visible);
           destroy_target(&targets[j].x);
+        }
+        if (target_bullets[j].is_visible == true &&
+            player_is_hit(target_bullets[j].x, target_bullets[j].y,
+                          cannon_position) == true) {
+
+          target_bullets_explosions[j].x = target_bullets[j].x;
+          target_bullets_explosions[j].y = target_bullets[j].y;
+          target_bullets_explosions[j].frames_left = EXPLOSION_FRAMES;
+
+          destroy_target_bullet(&target_bullets[i].is_visible);
         }
       }
     }
