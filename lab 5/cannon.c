@@ -147,7 +147,7 @@ void draw_background() {
 void draw_cannon(int cannon_position) {
   /* Additional relative coordinate system is needed because
   the cannon starts it's movement from the center of the screen. */
-  int relative_x = gfx_screenWidth() / 2 + cannon_position;
+  int relative_x = cannon_position;
   int relative_y = CANNON_RELATIVE_Y;
 
   gfx_filledCircle(relative_x - 22, relative_y + 20, 10, YELLOW);
@@ -266,11 +266,11 @@ int max_num_from_digits(int digits) {
 
 // Limits the cannons movement to the screen width.
 void set_cannon_boundary(int *cannon_position) {
-  if (gfx_screenWidth() / 2 + *cannon_position <= 0) {
-    *cannon_position = -(gfx_screenWidth() / 2);
+  if (*cannon_position <= 0) {
+    *cannon_position = 0;
   }
-  if (gfx_screenWidth() / 2 + *cannon_position >= gfx_screenWidth()) {
-    *cannon_position = gfx_screenWidth() / 2;
+  if (*cannon_position >= gfx_screenWidth()) {
+    *cannon_position = gfx_screenWidth();
   }
 }
 
@@ -293,8 +293,20 @@ void move_stars(float *star_y, int *star_velocity) {
 void draw_target_bullet(int x, int y) { gfx_filledCircle(x, y, 10, RED); }
 
 bool player_is_hit(int bullet_x, int bullet_y, int cannon_position) {
-  return hypot((cannon_position - bullet_x), (CANNON_RELATIVE_Y - bullet_y)) <=
-         120;
+  return (hypot((cannon_position - bullet_x), (CANNON_RELATIVE_Y - bullet_y)) <=
+              40 ||
+          hypot((cannon_position - bullet_x - 50),
+                (CANNON_RELATIVE_Y - bullet_y)) <= 25 ||
+          hypot((cannon_position - bullet_x + 50),
+                (CANNON_RELATIVE_Y - bullet_y)) <= 25 ||
+          hypot((cannon_position - bullet_x - 70),
+                (CANNON_RELATIVE_Y - bullet_y + 15)) <= 10 ||
+          hypot((cannon_position - bullet_x + 70),
+                (CANNON_RELATIVE_Y - bullet_y + 15)) <= 10 ||
+          hypot((cannon_position - bullet_x - 80),
+                (CANNON_RELATIVE_Y - bullet_y + 20)) <= 3 ||
+          hypot((cannon_position - bullet_x + 80),
+                (CANNON_RELATIVE_Y - bullet_y + 20)) <= 3);
 }
 
 int main() {
@@ -319,7 +331,7 @@ int main() {
   for (int i = 0; i < MAX_BULLETS; ++i) {
     bullets[i].x = 0;
     bullets[i].y = 0;
-    bullets[i].fire_position = 0;
+    bullets[i].fire_position = gfx_screenWidth() / 2;
     bullets[i].visible = false;
   }
 
@@ -349,7 +361,9 @@ int main() {
     explosions[i].scale = 0;
   }
 
-  int cannon_position = 0;
+  /* The default position is in the center of the screen */
+  int cannon_position = gfx_screenWidth() / 2;
+  ;
 
   bool should_shoot = false;
 
@@ -475,7 +489,7 @@ int main() {
 
     // Bullet animating loop.
     for (int i = 0; i < MAX_BULLETS; ++i) {
-      bullets[i].x = gfx_screenWidth() / 2 + bullets[i].fire_position;
+      bullets[i].x = bullets[i].fire_position;
       bullets[i].y = gfx_screenHeight() - bullets[i].distance;
 
       if (bullets[i].visible == true) {
