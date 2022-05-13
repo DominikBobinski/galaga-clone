@@ -18,6 +18,8 @@
 #define CANNON_SPEED 4
 #define STAR_AMOUNT 60
 #define CANNON_RELATIVE_Y (gfx_screenHeight() - 50)
+#define MAX_LIVES 5
+#define STARTING_LIVES 3
 
 struct Bullet {
   int x;
@@ -237,7 +239,7 @@ bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
 }
 
 // Draws the score table.
-void draw_stats(int bullet_counter, int enemies_hit_counter) {
+void draw_stats(int bullet_counter, int enemies_hit_counter, int lives_left) {
   const char bullets_shot_text[14] = "Bullets shot:";
   const char enemies_hit_text[13] = "Enemies hit:";
   char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
@@ -253,6 +255,10 @@ void draw_stats(int bullet_counter, int enemies_hit_counter) {
               SDL_itoa(bullet_counter, bullet_count_buffer, 10), WHITE);
   gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 25,
               SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), WHITE);
+
+  for (int i = 1; i < lives_left + 1; ++i) {
+    gfx_filledCircle(i * 50, gfx_screenHeight() - 30, 10, RED);
+  }
 }
 
 // Calculates the maximum number avaible given the amount of digits.
@@ -384,9 +390,13 @@ int main() {
   int bullet_counter = 0;
   int enemies_hit_counter = 0;
 
+  int lives_left = STARTING_LIVES;
+
   /* Scales that can be used for target sizes. Have to be careful as they aren't
      connectd in any way to the MIN_DISTANCE_FOR_HIT. */
   float target_scales[4] = {1, 1.5, 2, 2.5};
+
+  int counter_control = 0;
 
   while (1) {
     if (gfx_pollkey() == SDLK_SPACE)
@@ -412,7 +422,13 @@ int main() {
       }
     }
 
-    draw_stats(bullet_counter, enemies_hit_counter);
+    if (enemies_hit_counter % 10 == 0 & enemies_hit_counter != 0 &&
+        counter_control == 1) {
+      lives_left += 1;
+      counter_control = 0;
+    }
+
+    draw_stats(bullet_counter, enemies_hit_counter, lives_left);
     draw_cannon(cannon_position);
 
     // Fetches the time at which the current frame is created.
@@ -530,6 +546,7 @@ int main() {
             is_hit(targets[j].x, targets[j].y, bullets[i].x, bullets[i].y)) {
 
           enemies_hit_counter += 1;
+          counter_control = 1;
 
           explosions[j].x = targets[j].x;
           explosions[j].y = targets[j].y;
@@ -541,6 +558,8 @@ int main() {
         if (target_bullets[j].is_visible == true &&
             player_is_hit(target_bullets[j].x, target_bullets[j].y,
                           cannon_position) == true) {
+
+          lives_left -= 1;
 
           target_bullets_explosions[j].x = target_bullets[j].x;
           target_bullets_explosions[j].y = target_bullets[j].y;
