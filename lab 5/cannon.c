@@ -347,6 +347,7 @@ int max_num_from_digits(int digits) {
   return max_num;
 }
 
+// Sets the bullet or enemies hit counters to 0 if they exceed max digit limits.
 void control_digit_amount_in_scoreboard(int *bullet_counter,
                                         int *enemies_hit_counter) {
   if (*bullet_counter >= max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
@@ -451,11 +452,13 @@ int main() {
     for (int i = 0; i < STAR_AMOUNT; ++i) {
       draw_stars(stars[i].x, stars[i].y);
       move_stars(&stars[i].y, &stars[i].velocity);
+      // Set star y to 0 if it exits the screen
       if (stars[i].y >= gfx_screenHeight()) {
         stars[i].y = 0;
       }
     }
 
+    // Give the player +1 life every 10 hit targets.
     if (enemies_hit_counter % 10 == 0 && enemies_hit_counter != 0 &&
         counter_control == 1 && lives_left < MAX_LIVES) {
       lives_left += 1;
@@ -502,12 +505,13 @@ int main() {
 
         if (target_bullets[j].is_visible == true) {
           draw_target_bullet(target_bullets[j].x, target_bullets[j].y);
-          target_bullets[j].y +=
-              target_bullets[j].velocity; // moves targets' bullets
+          // moves targets' bullets
+          target_bullets[j].y += target_bullets[j].velocity;
         }
       }
     }
 
+    // Hides the targets bullet if it exits the screen.
     for (int j = 0; j < MAX_TARGETS; ++j) {
       if (target_bullets[j].y >= gfx_screenHeight()) {
         target_bullets[j].is_visible = false;
