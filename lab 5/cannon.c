@@ -3,6 +3,7 @@
 #include <SDL2/SDL_keycode.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include <time.h>
 
 #define INITIAL_BULLET_DISTANCE_FROM_SHIP 110
@@ -312,26 +313,60 @@ bool player_is_hit(int bullet_x, int bullet_y, int ship_position) {
 
 void destroy_enemy_bullet(bool *bullet) { *bullet = false; }
 
-// Shows the "Game over" screen
-void game_over() {
+// Shows the "game over" screen and allows to either exit or play again.
+void game_over(int bullet_counter, int enemies_hit_counter) {
   while (1) {
-    if (gfx_pollkey() == SDLK_SPACE) {
-      exit(3);
-    }
+    int key_pressed = gfx_pollkey();
 
     const char game_over[10] = "GAME OVER";
-    const char press_space[20] = "PRESS SPACE TO QUIT";
+    const char press_esc[19] = "PRESS ESC TO QUIT";
+    const char press_space[26] = "PRESS SPACE TO PLAY AGAIN";
+    const char final_score[13] = "Final Score:";
 
     draw_background();
+
     gfx_rect(gfx_screenWidth() / 2 - 500, gfx_screenHeight() / 2 - 200,
              gfx_screenWidth() / 2 + 500, gfx_screenHeight() / 2 + 200, WHITE);
     gfx_rect(gfx_screenWidth() / 2 - 495, gfx_screenHeight() / 2 - 195,
              gfx_screenWidth() / 2 + 495, gfx_screenHeight() / 2 + 195, WHITE);
-    gfx_textout(gfx_screenWidth() / 2 - 15, gfx_screenHeight() / 2, game_over,
-                WHITE);
-    gfx_textout(gfx_screenWidth() / 2 - 55, gfx_screenHeight() / 2 + 150,
+
+    gfx_textout(gfx_screenWidth() / 2 - 35, gfx_screenHeight() / 2 - 100,
+                game_over, WHITE);
+    gfx_line(gfx_screenWidth() / 2 - 45, gfx_screenHeight() / 2 - 90,
+             gfx_screenWidth() / 2 + 45, gfx_screenHeight() / 2 - 90, WHITE);
+
+    gfx_textout(gfx_screenWidth() / 2 - 45, gfx_screenHeight() / 2 - 20,
+                final_score, WHITE);
+    gfx_rect(gfx_screenWidth() / 2 - 80, gfx_screenHeight() / 2 - 30,
+             gfx_screenWidth() / 2 + 80, gfx_screenHeight() / 2 + 40, WHITE);
+
+    gfx_textout(gfx_screenWidth() / 2 - 100, gfx_screenHeight() / 2 + 80,
                 press_space, WHITE);
 
+    gfx_textout(gfx_screenWidth() / 2 - 68, gfx_screenHeight() / 2 + 150,
+                press_esc, WHITE);
+
+    const char bullets_shot_text[14] = "Bullets shot:";
+    const char enemies_hit_text[13] = "Enemies hit:";
+    char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
+    char enemies_hit_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
+
+    gfx_textout(gfx_screenWidth() / 2 - 63, gfx_screenHeight() / 2,
+                bullets_shot_text, WHITE);
+    gfx_textout(gfx_screenWidth() / 2 - 63, gfx_screenHeight() / 2 + 20,
+                enemies_hit_text, WHITE);
+    gfx_textout(gfx_screenWidth() / 2 + 45, gfx_screenHeight() / 2,
+                SDL_itoa(bullet_counter, bullet_count_buffer, 10), WHITE);
+    gfx_textout(gfx_screenWidth() / 2 + 45, gfx_screenHeight() / 2 + 20,
+                SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), WHITE);
+
+    if (key_pressed == SDLK_ESCAPE) {
+      exit(3);
+    }
+
+    if (key_pressed == SDLK_SPACE) {
+      break;
+    }
     gfx_updateScreen();
     SDL_Delay(10);
   }
@@ -374,6 +409,8 @@ int main() {
   struct enemy_bullet enemy_bullets[MAX_ENEMIES];
 
   struct Explosion enemy_bullets_explosions[MAX_ENEMIES];
+
+START:
 
   srand(time(0));
 
@@ -442,7 +479,11 @@ int main() {
     control_digit_amount_in_scoreboard(&bullet_counter, &enemies_hit_counter);
 
     if (lives_left == 0) {
-      game_over();
+      game_over(bullet_counter, enemies_hit_counter);
+      goto START; /* Perhaps dumb? Goes backwards in code to where srand() is
+                     ran and variables are being initialized. This is done to
+                     reset all progress in the game in case the player chooses
+                     to play again. */
     }
 
     draw_background();
