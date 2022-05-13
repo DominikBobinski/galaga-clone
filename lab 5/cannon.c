@@ -422,7 +422,7 @@ int main() {
       }
     }
 
-    if (enemies_hit_counter % 10 == 0 & enemies_hit_counter != 0 &&
+    if (enemies_hit_counter % 10 == 0 && enemies_hit_counter != 0 &&
         counter_control == 1 && lives_left < MAX_LIVES) {
       lives_left += 1;
       counter_control = 0;
