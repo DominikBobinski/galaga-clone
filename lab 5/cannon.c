@@ -290,7 +290,12 @@ void move_stars(float *star_y, int *star_velocity) {
   *star_y += *star_velocity;
 }
 
-void draw_target_bullet(int x, int y) { gfx_filledCircle(x, y, 10, RED); }
+void draw_target_bullet(int x, int y) {
+  gfx_filledCircle(x, y + 2, 5, CYAN);
+  gfx_filledTriangle(x - 5, y, x + 5, y, x, y - 15, CYAN);
+  gfx_filledCircle(x, y + 2, 3, MAGENTA);
+  gfx_filledTriangle(x - 3, y, x + 3, y, x, y - 13, MAGENTA);
+}
 
 bool player_is_hit(int bullet_x, int bullet_y, int cannon_position) {
   return (hypot((cannon_position - bullet_x), (CANNON_RELATIVE_Y - bullet_y)) <=
