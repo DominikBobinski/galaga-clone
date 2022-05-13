@@ -322,6 +322,31 @@ bool player_is_hit(int bullet_x, int bullet_y, int cannon_position) {
 
 void destroy_target_bullet(bool *bullet) { *bullet = false; }
 
+// Shows the "Game over" screen
+void game_over() {
+  while (1) {
+    if (gfx_pollkey() == SDLK_SPACE) {
+      exit(3);
+    }
+
+    const char game_over[10] = "GAME OVER";
+    const char press_space[20] = "PRESS SPACE TO QUIT";
+
+    draw_background();
+    gfx_rect(gfx_screenWidth() / 2 - 500, gfx_screenHeight() / 2 - 200,
+             gfx_screenWidth() / 2 + 500, gfx_screenHeight() / 2 + 200, WHITE);
+    gfx_rect(gfx_screenWidth() / 2 - 495, gfx_screenHeight() / 2 - 195,
+             gfx_screenWidth() / 2 + 495, gfx_screenHeight() / 2 + 195, WHITE);
+    gfx_textout(gfx_screenWidth() / 2 - 15, gfx_screenHeight() / 2, game_over,
+                WHITE);
+    gfx_textout(gfx_screenWidth() / 2 - 55, gfx_screenHeight() / 2 + 150,
+                press_space, WHITE);
+
+    gfx_updateScreen();
+    SDL_Delay(10);
+  }
+}
+
 int main() {
   if (gfx_init())
     exit(3);
@@ -409,6 +434,10 @@ int main() {
     if (enemies_hit_counter >=
         max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
       enemies_hit_counter = 0;
+    }
+
+    if (lives_left == 0) {
+      game_over();
     }
 
     draw_background();
