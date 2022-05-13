@@ -261,15 +261,6 @@ void draw_stats(int bullet_counter, int enemies_hit_counter) {
               SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), WHITE);
 }
 
-// Calculates the maximum number avaible given the amount of digits.
-int max_num_from_digits(int digits) {
-  int max_num = 0;
-  for (int i = 0; i < digits; ++i) {
-    max_num = max_num * 10 + 9;
-  }
-  return max_num;
-}
-
 // Limits the cannons movement to the screen width.
 void set_cannon_boundary(int *cannon_position) {
   if (*cannon_position <= 0) {
@@ -344,6 +335,27 @@ void game_over() {
 
     gfx_updateScreen();
     SDL_Delay(10);
+  }
+}
+
+// Calculates the maximum number avaible given the amount of digits.
+int max_num_from_digits(int digits) {
+  int max_num = 0;
+  for (int i = 0; i < digits; ++i) {
+    max_num = max_num * 10 + 9;
+  }
+  return max_num;
+}
+
+void control_digit_amount_in_scoreboard(int *bullet_counter,
+                                        int *enemies_hit_counter) {
+  if (*bullet_counter >= max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
+    *bullet_counter = 0;
+  }
+
+  if (*enemies_hit_counter >=
+      max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
+    *enemies_hit_counter = 0;
   }
 }
 
@@ -427,14 +439,7 @@ int main() {
     if (gfx_pollkey() == SDLK_SPACE)
       should_shoot = true;
 
-    if (bullet_counter >= max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
-      bullet_counter = 0;
-    }
-
-    if (enemies_hit_counter >=
-        max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
-      enemies_hit_counter = 0;
-    }
+    control_digit_amount_in_scoreboard(&bullet_counter, &enemies_hit_counter);
 
     if (lives_left == 0) {
       game_over();
