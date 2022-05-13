@@ -118,8 +118,7 @@ void draw_enemy(float x_enemy, float y_enemy, float scale) {
 void move_enemy(float *x_enemy, float *y_enemy, float enemy_multiplier) {
   const int y_amplitude = 20;
   const double vertical_displacement = y_amplitude * sin(*x_enemy * 0.02);
-  *y_enemy =
-      (AVERAGE_ENEMY_HEIGHT + vertical_displacement) * enemy_multiplier;
+  *y_enemy = (AVERAGE_ENEMY_HEIGHT + vertical_displacement) * enemy_multiplier;
   *x_enemy += ENEMY_VELOCITY + enemy_multiplier * 0.1;
 }
 
@@ -295,20 +294,20 @@ void draw_enemy_bullet(int x, int y) {
 }
 
 bool player_is_hit(int bullet_x, int bullet_y, int ship_position) {
-  return (hypot((ship_position - bullet_x), (SHIP_RELATIVE_Y - bullet_y)) <=
-              40 ||
-          hypot((ship_position - bullet_x - 50),
-                (SHIP_RELATIVE_Y - bullet_y)) <= 25 ||
-          hypot((ship_position - bullet_x + 50),
-                (SHIP_RELATIVE_Y - bullet_y)) <= 25 ||
-          hypot((ship_position - bullet_x - 70),
-                (SHIP_RELATIVE_Y - bullet_y + 15)) <= 10 ||
-          hypot((ship_position - bullet_x + 70),
-                (SHIP_RELATIVE_Y - bullet_y + 15)) <= 10 ||
-          hypot((ship_position - bullet_x - 80),
-                (SHIP_RELATIVE_Y - bullet_y + 20)) <= 3 ||
-          hypot((ship_position - bullet_x + 80),
-                (SHIP_RELATIVE_Y - bullet_y + 20)) <= 3);
+  return (
+      hypot((ship_position - bullet_x), (SHIP_RELATIVE_Y - bullet_y)) <= 40 ||
+      hypot((ship_position - bullet_x - 50), (SHIP_RELATIVE_Y - bullet_y)) <=
+          25 ||
+      hypot((ship_position - bullet_x + 50), (SHIP_RELATIVE_Y - bullet_y)) <=
+          25 ||
+      hypot((ship_position - bullet_x - 70),
+            (SHIP_RELATIVE_Y - bullet_y + 15)) <= 10 ||
+      hypot((ship_position - bullet_x + 70),
+            (SHIP_RELATIVE_Y - bullet_y + 15)) <= 10 ||
+      hypot((ship_position - bullet_x - 80),
+            (SHIP_RELATIVE_Y - bullet_y + 20)) <= 3 ||
+      hypot((ship_position - bullet_x + 80),
+            (SHIP_RELATIVE_Y - bullet_y + 20)) <= 3);
 }
 
 void destroy_enemy_bullet(bool *bullet) { *bullet = false; }
