@@ -146,7 +146,7 @@ void draw_background() {
   gfx_filledRect(0, 0, gfx_screenWidth() - 1, gfx_screenHeight() - 1, BLACK);
 }
 
-void draw_cannon(int cannon_position) {
+void draw_cannon(int cannon_position, int lives_left) {
   /* Additional relative coordinate system is needed because
   the cannon starts it's movement from the center of the screen. */
   int relative_x = cannon_position;
@@ -218,6 +218,10 @@ void draw_cannon(int cannon_position) {
   gfx_filledCircle(relative_x + 5, relative_y - 2, 3, BLUE);
   gfx_filledTriangle(relative_x - 3, relative_y + 2, relative_x + 3,
                      relative_y + 2, relative_x, relative_y + 5, BLUE);
+
+  for (int i = 1; i <= lives_left; ++i) {
+    gfx_filledCircle(relative_x - 24 + i * 8, relative_y - 20, 3, RED);
+  }
 }
 
 void draw_bullet(int x_bullet, int y_bullet) {
@@ -239,7 +243,7 @@ bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
 }
 
 // Draws the score table.
-void draw_stats(int bullet_counter, int enemies_hit_counter, int lives_left) {
+void draw_stats(int bullet_counter, int enemies_hit_counter) {
   const char bullets_shot_text[14] = "Bullets shot:";
   const char enemies_hit_text[13] = "Enemies hit:";
   char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
@@ -255,10 +259,6 @@ void draw_stats(int bullet_counter, int enemies_hit_counter, int lives_left) {
               SDL_itoa(bullet_counter, bullet_count_buffer, 10), WHITE);
   gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 25,
               SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), WHITE);
-
-  for (int i = 1; i < lives_left + 1; ++i) {
-    gfx_filledCircle(i * 50, gfx_screenHeight() - 30, 10, RED);
-  }
 }
 
 // Calculates the maximum number avaible given the amount of digits.
@@ -423,13 +423,13 @@ int main() {
     }
 
     if (enemies_hit_counter % 10 == 0 & enemies_hit_counter != 0 &&
-        counter_control == 1) {
+        counter_control == 1 && lives_left < MAX_LIVES) {
       lives_left += 1;
       counter_control = 0;
     }
 
-    draw_stats(bullet_counter, enemies_hit_counter, lives_left);
-    draw_cannon(cannon_position);
+    draw_stats(bullet_counter, enemies_hit_counter);
+    draw_cannon(cannon_position, lives_left);
 
     // Fetches the time at which the current frame is created.
     time_t current_time = time(NULL);
