@@ -5,19 +5,19 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define INITIAL_BULLET_DISTANCE_FROM_CANNON 110
+#define INITIAL_BULLET_DISTANCE_FROM_SHIP 110
 #define MAX_BULLETS 3
 #define MIN_DISTANCE_FOR_HIT 27
 #define EXPLOSION_FRAMES 20
 #define BULLET_VELOCITY 15
-#define TARGET_VELOCITY 3
-#define AVERAGE_TARGET_HEIGHT 80
+#define ENEMY_VELOCITY 3
+#define AVERAGE_ENEMY_HEIGHT 80
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
-#define MAX_TARGETS 6
-#define MAX_TARGET_WAIT_TIME 15 // Sets time in seconds until target appears.
-#define CANNON_SPEED 4
+#define MAX_ENEMIES 6
+#define MAX_ENEMY_WAIT_TIME 15 // Sets time in seconds until enemy appears.
+#define SHIP_SPEED 4
 #define STAR_AMOUNT 60
-#define CANNON_RELATIVE_Y (gfx_screenHeight() - 50)
+#define SHIP_RELATIVE_Y (gfx_screenHeight() - 50)
 #define MAX_LIVES 5
 #define STARTING_LIVES 3
 
@@ -29,7 +29,7 @@ struct Bullet {
   bool visible;
 };
 
-struct Target {
+struct enemy {
   float x;
   float y;
   float multiplier;
@@ -50,7 +50,7 @@ struct Star {
   int velocity;
 };
 
-struct Target_bullet {
+struct enemy_bullet {
   int y;
   int x;
   bool should_shoot;
@@ -58,99 +58,99 @@ struct Target_bullet {
   bool is_visible;
 };
 
-// Sets the initial bullet-cannon distance and the bullet position.
-void shoot(struct Bullet *bullet, int cannon_position) {
-  bullet->distance = INITIAL_BULLET_DISTANCE_FROM_CANNON;
-  bullet->fire_position = cannon_position;
+// Sets the initial bullet-ship distance and the bullet position.
+void shoot(struct Bullet *bullet, int ship_position) {
+  bullet->distance = INITIAL_BULLET_DISTANCE_FROM_SHIP;
+  bullet->fire_position = ship_position;
 }
 
-void draw_target(float x_target, float y_target, float scale) {
-  gfx_circle(x_target, y_target, 15 * scale, GREEN);
-  gfx_filledCircle(x_target, y_target, 12 * scale, GREEN);
+void draw_enemy(float x_enemy, float y_enemy, float scale) {
+  gfx_circle(x_enemy, y_enemy, 15 * scale, GREEN);
+  gfx_filledCircle(x_enemy, y_enemy, 12 * scale, GREEN);
 
-  gfx_filledTriangle(x_target + 6 * scale, y_target - 6 * scale,
-                     x_target + 10 * scale, y_target - 1 * scale,
-                     x_target + 15 * scale, y_target - 10 * scale, GREEN);
-  gfx_filledTriangle(x_target - 6 * scale, y_target - 6 * scale,
-                     x_target - 10 * scale, y_target - 1 * scale,
-                     x_target - 15 * scale, y_target - 10 * scale, GREEN);
-  gfx_filledTriangle(x_target + 2 * scale, y_target - 4 * scale,
-                     x_target + 6 * scale, y_target + 2 * scale,
-                     x_target + 6 * scale, y_target - 16 * scale, GREEN);
-  gfx_filledTriangle(x_target - 2 * scale, y_target - 4 * scale,
-                     x_target - 6 * scale, y_target + 2 * scale,
-                     x_target - 6 * scale, y_target - 16 * scale, GREEN);
+  gfx_filledTriangle(x_enemy + 6 * scale, y_enemy - 6 * scale,
+                     x_enemy + 10 * scale, y_enemy - 1 * scale,
+                     x_enemy + 15 * scale, y_enemy - 10 * scale, GREEN);
+  gfx_filledTriangle(x_enemy - 6 * scale, y_enemy - 6 * scale,
+                     x_enemy - 10 * scale, y_enemy - 1 * scale,
+                     x_enemy - 15 * scale, y_enemy - 10 * scale, GREEN);
+  gfx_filledTriangle(x_enemy + 2 * scale, y_enemy - 4 * scale,
+                     x_enemy + 6 * scale, y_enemy + 2 * scale,
+                     x_enemy + 6 * scale, y_enemy - 16 * scale, GREEN);
+  gfx_filledTriangle(x_enemy - 2 * scale, y_enemy - 4 * scale,
+                     x_enemy - 6 * scale, y_enemy + 2 * scale,
+                     x_enemy - 6 * scale, y_enemy - 16 * scale, GREEN);
 
-  gfx_filledCircle(x_target, y_target - 2 * scale, 4 * scale, WHITE);
-  gfx_filledCircle(x_target, y_target - 1 * scale, 2 * scale, BLACK);
+  gfx_filledCircle(x_enemy, y_enemy - 2 * scale, 4 * scale, WHITE);
+  gfx_filledCircle(x_enemy, y_enemy - 1 * scale, 2 * scale, BLACK);
 
-  gfx_line(x_target - 5 * scale, y_target - 7 * scale, x_target - 1 * scale,
-           y_target - 6 * scale, BLACK);
-  gfx_line(x_target + 5 * scale, y_target - 7 * scale, x_target + 1 * scale,
-           y_target - 6 * scale, BLACK);
+  gfx_line(x_enemy - 5 * scale, y_enemy - 7 * scale, x_enemy - 1 * scale,
+           y_enemy - 6 * scale, BLACK);
+  gfx_line(x_enemy + 5 * scale, y_enemy - 7 * scale, x_enemy + 1 * scale,
+           y_enemy - 6 * scale, BLACK);
 
-  gfx_filledTriangle(x_target - 12 * scale, y_target, x_target - 1 * scale,
-                     y_target + 13 * scale, x_target - 6 * scale,
-                     y_target + 18 * scale, GREEN);
-  gfx_filledTriangle(x_target + 12 * scale, y_target, x_target + 1 * scale,
-                     y_target + 13 * scale, x_target + 6 * scale,
-                     y_target + 18 * scale, GREEN);
+  gfx_filledTriangle(x_enemy - 12 * scale, y_enemy, x_enemy - 1 * scale,
+                     y_enemy + 13 * scale, x_enemy - 6 * scale,
+                     y_enemy + 18 * scale, GREEN);
+  gfx_filledTriangle(x_enemy + 12 * scale, y_enemy, x_enemy + 1 * scale,
+                     y_enemy + 13 * scale, x_enemy + 6 * scale,
+                     y_enemy + 18 * scale, GREEN);
 
-  gfx_filledTriangle(x_target - 3 * scale, y_target + 12 * scale,
-                     x_target + 3 * scale, y_target + 12 * scale, x_target,
-                     y_target + 15 * scale, WHITE);
-  gfx_filledTriangle(x_target - 6 * scale, y_target + 16 * scale,
-                     x_target - 4 * scale, y_target + 16 * scale,
-                     x_target - 2 * scale, y_target + 18 * scale, WHITE);
-  gfx_filledTriangle(x_target + 6 * scale, y_target + 16 * scale,
-                     x_target + 4 * scale, y_target + 16 * scale,
-                     x_target + 2 * scale, y_target + 18 * scale, WHITE);
+  gfx_filledTriangle(x_enemy - 3 * scale, y_enemy + 12 * scale,
+                     x_enemy + 3 * scale, y_enemy + 12 * scale, x_enemy,
+                     y_enemy + 15 * scale, WHITE);
+  gfx_filledTriangle(x_enemy - 6 * scale, y_enemy + 16 * scale,
+                     x_enemy - 4 * scale, y_enemy + 16 * scale,
+                     x_enemy - 2 * scale, y_enemy + 18 * scale, WHITE);
+  gfx_filledTriangle(x_enemy + 6 * scale, y_enemy + 16 * scale,
+                     x_enemy + 4 * scale, y_enemy + 16 * scale,
+                     x_enemy + 2 * scale, y_enemy + 18 * scale, WHITE);
 
-  gfx_filledTriangle(x_target - 6 * scale, y_target + 11 * scale,
-                     x_target - 1 * scale, y_target + 13 * scale,
-                     x_target - 6 * scale, y_target + 20 * scale, RED);
-  gfx_filledTriangle(x_target + 6 * scale, y_target + 11 * scale,
-                     x_target + 1 * scale, y_target + 13 * scale,
-                     x_target + 6 * scale, y_target + 20 * scale, RED);
+  gfx_filledTriangle(x_enemy - 6 * scale, y_enemy + 11 * scale,
+                     x_enemy - 1 * scale, y_enemy + 13 * scale,
+                     x_enemy - 6 * scale, y_enemy + 20 * scale, RED);
+  gfx_filledTriangle(x_enemy + 6 * scale, y_enemy + 11 * scale,
+                     x_enemy + 1 * scale, y_enemy + 13 * scale,
+                     x_enemy + 6 * scale, y_enemy + 20 * scale, RED);
 }
 
-// Move target in a sinusoid path.
-void move_target(float *x_target, float *y_target, float target_multiplier) {
+// Move enemy in a sinusoid path.
+void move_enemy(float *x_enemy, float *y_enemy, float enemy_multiplier) {
   const int y_amplitude = 20;
-  const double vertical_displacement = y_amplitude * sin(*x_target * 0.02);
-  *y_target =
-      (AVERAGE_TARGET_HEIGHT + vertical_displacement) * target_multiplier;
-  *x_target += TARGET_VELOCITY + target_multiplier * 0.1;
+  const double vertical_displacement = y_amplitude * sin(*x_enemy * 0.02);
+  *y_enemy =
+      (AVERAGE_ENEMY_HEIGHT + vertical_displacement) * enemy_multiplier;
+  *x_enemy += ENEMY_VELOCITY + enemy_multiplier * 0.1;
 }
 
-// Removes the bullet that hit a target.
+// Removes the bullet that hit a enemy.
 void destroy_bullet(bool *bullet) { *bullet = false; }
 
-// Resets the hit target's position.
-void destroy_target(float *x_target) { *x_target = 0; }
+// Resets the hit enemy's position.
+void destroy_enemy(float *x_enemy) { *x_enemy = 0; }
 
-// Detects if a bullet came in contact with a target, returns true or false.
-bool is_hit(float x_target, float y_target, int bullet_x, int bullet_y) {
+// Detects if a bullet came in contact with a enemy, returns true or false.
+bool is_hit(float x_enemy, float y_enemy, int bullet_x, int bullet_y) {
   double bullet_to_enemy_distance =
-      hypot((x_target - bullet_x), (y_target - bullet_y));
+      hypot((x_enemy - bullet_x), (y_enemy - bullet_y));
 
   return bullet_to_enemy_distance <= MIN_DISTANCE_FOR_HIT;
 }
 
-void draw_explosion(float x_target, float y_target, int scale) {
-  gfx_circle(x_target, y_target, 5 * scale / 2, RED);
-  gfx_circle(x_target, y_target, 3 * scale / 4, YELLOW);
+void draw_explosion(float x_enemy, float y_enemy, int scale) {
+  gfx_circle(x_enemy, y_enemy, 5 * scale / 2, RED);
+  gfx_circle(x_enemy, y_enemy, 3 * scale / 4, YELLOW);
 }
 
 void draw_background() {
   gfx_filledRect(0, 0, gfx_screenWidth() - 1, gfx_screenHeight() - 1, BLACK);
 }
 
-void draw_cannon(int cannon_position, int lives_left) {
+void draw_ship(int ship_position, int lives_left) {
   /* Additional relative coordinate system is needed because
-  the cannon starts it's movement from the center of the screen. */
-  int relative_x = cannon_position;
-  int relative_y = CANNON_RELATIVE_Y;
+  the ship starts it's movement from the center of the screen. */
+  int relative_x = ship_position;
+  int relative_y = SHIP_RELATIVE_Y;
 
   gfx_filledCircle(relative_x - 22, relative_y + 20, 10, YELLOW);
   gfx_circle(relative_x - 22, relative_y + 20, 12, RED);
@@ -261,13 +261,13 @@ void draw_stats(int bullet_counter, int enemies_hit_counter) {
               SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), WHITE);
 }
 
-// Limits the cannons movement to the screen width.
-void set_cannon_boundary(int *cannon_position) {
-  if (*cannon_position <= 0) {
-    *cannon_position = 0;
+// Limits the ships movement to the screen width.
+void set_ship_boundary(int *ship_position) {
+  if (*ship_position <= 0) {
+    *ship_position = 0;
   }
-  if (*cannon_position >= gfx_screenWidth()) {
-    *cannon_position = gfx_screenWidth();
+  if (*ship_position >= gfx_screenWidth()) {
+    *ship_position = gfx_screenWidth();
   }
 }
 
@@ -287,31 +287,31 @@ void move_stars(float *star_y, int *star_velocity) {
   *star_y += *star_velocity;
 }
 
-void draw_target_bullet(int x, int y) {
+void draw_enemy_bullet(int x, int y) {
   gfx_filledCircle(x, y + 2, 5, CYAN);
   gfx_filledTriangle(x - 5, y, x + 5, y, x, y - 15, CYAN);
   gfx_filledCircle(x, y + 2, 3, MAGENTA);
   gfx_filledTriangle(x - 3, y, x + 3, y, x, y - 13, MAGENTA);
 }
 
-bool player_is_hit(int bullet_x, int bullet_y, int cannon_position) {
-  return (hypot((cannon_position - bullet_x), (CANNON_RELATIVE_Y - bullet_y)) <=
+bool player_is_hit(int bullet_x, int bullet_y, int ship_position) {
+  return (hypot((ship_position - bullet_x), (SHIP_RELATIVE_Y - bullet_y)) <=
               40 ||
-          hypot((cannon_position - bullet_x - 50),
-                (CANNON_RELATIVE_Y - bullet_y)) <= 25 ||
-          hypot((cannon_position - bullet_x + 50),
-                (CANNON_RELATIVE_Y - bullet_y)) <= 25 ||
-          hypot((cannon_position - bullet_x - 70),
-                (CANNON_RELATIVE_Y - bullet_y + 15)) <= 10 ||
-          hypot((cannon_position - bullet_x + 70),
-                (CANNON_RELATIVE_Y - bullet_y + 15)) <= 10 ||
-          hypot((cannon_position - bullet_x - 80),
-                (CANNON_RELATIVE_Y - bullet_y + 20)) <= 3 ||
-          hypot((cannon_position - bullet_x + 80),
-                (CANNON_RELATIVE_Y - bullet_y + 20)) <= 3);
+          hypot((ship_position - bullet_x - 50),
+                (SHIP_RELATIVE_Y - bullet_y)) <= 25 ||
+          hypot((ship_position - bullet_x + 50),
+                (SHIP_RELATIVE_Y - bullet_y)) <= 25 ||
+          hypot((ship_position - bullet_x - 70),
+                (SHIP_RELATIVE_Y - bullet_y + 15)) <= 10 ||
+          hypot((ship_position - bullet_x + 70),
+                (SHIP_RELATIVE_Y - bullet_y + 15)) <= 10 ||
+          hypot((ship_position - bullet_x - 80),
+                (SHIP_RELATIVE_Y - bullet_y + 20)) <= 3 ||
+          hypot((ship_position - bullet_x + 80),
+                (SHIP_RELATIVE_Y - bullet_y + 20)) <= 3);
 }
 
-void destroy_target_bullet(bool *bullet) { *bullet = false; }
+void destroy_enemy_bullet(bool *bullet) { *bullet = false; }
 
 // Shows the "Game over" screen
 void game_over() {
@@ -366,15 +366,15 @@ int main() {
 
   struct Bullet bullets[MAX_BULLETS];
 
-  struct Target targets[MAX_TARGETS];
+  struct enemy enemies[MAX_ENEMIES];
 
   struct Star stars[STAR_AMOUNT];
 
-  struct Explosion explosions[MAX_TARGETS];
+  struct Explosion explosions[MAX_ENEMIES];
 
-  struct Target_bullet target_bullets[MAX_TARGETS];
+  struct enemy_bullet enemy_bullets[MAX_ENEMIES];
 
-  struct Explosion target_bullets_explosions[MAX_TARGETS];
+  struct Explosion enemy_bullets_explosions[MAX_ENEMIES];
 
   srand(time(0));
 
@@ -395,32 +395,32 @@ int main() {
     stars[i].velocity = rand() % 5;
   }
 
-  // Initializes some variables of targets and explosions.
-  for (int i = 0; i < MAX_TARGETS; ++i) {
-    targets[i].x = 0;
-    targets[i].y = AVERAGE_TARGET_HEIGHT;
-    targets[i].multiplier = rand() % 5 + 1;
-    targets[i].time_to_appear = rand() % MAX_TARGET_WAIT_TIME;
+  // Initializes some variables of enemies and explosions.
+  for (int i = 0; i < MAX_ENEMIES; ++i) {
+    enemies[i].x = 0;
+    enemies[i].y = AVERAGE_ENEMY_HEIGHT;
+    enemies[i].multiplier = rand() % 5 + 1;
+    enemies[i].time_to_appear = rand() % MAX_ENEMY_WAIT_TIME;
 
-    target_bullets[i].y = 0;
-    target_bullets[i].x = 0;
-    target_bullets[i].should_shoot = false;
-    target_bullets[i].velocity = 4;
-    target_bullets[i].is_visible = false;
+    enemy_bullets[i].y = 0;
+    enemy_bullets[i].x = 0;
+    enemy_bullets[i].should_shoot = false;
+    enemy_bullets[i].velocity = 4;
+    enemy_bullets[i].is_visible = false;
 
     explosions[i].x = 0;
     explosions[i].y = 0;
     explosions[i].frames_left = 0;
     explosions[i].scale = 0;
 
-    target_bullets_explosions[i].x = 0;
-    target_bullets_explosions[i].y = 0;
-    target_bullets_explosions[i].frames_left = 0;
-    target_bullets_explosions[i].scale = 0;
+    enemy_bullets_explosions[i].x = 0;
+    enemy_bullets_explosions[i].y = 0;
+    enemy_bullets_explosions[i].frames_left = 0;
+    enemy_bullets_explosions[i].scale = 0;
   }
 
   /* The default position is in the center of the screen */
-  int cannon_position = gfx_screenWidth() / 2;
+  int ship_position = gfx_screenWidth() / 2;
   ;
 
   bool should_shoot = false;
@@ -430,9 +430,9 @@ int main() {
 
   int lives_left = STARTING_LIVES;
 
-  /* Scales that can be used for target sizes. Have to be careful as they aren't
+  /* Scales that can be used for enemy sizes. Have to be careful as they aren't
      connectd in any way to the MIN_DISTANCE_FOR_HIT. */
-  float target_scales[4] = {1, 1.5, 2, 2.5};
+  float enemy_scales[4] = {1, 1.5, 2, 2.5};
 
   int counter_control = 0;
 
@@ -458,7 +458,7 @@ int main() {
       }
     }
 
-    // Give the player +1 life every 10 hit targets.
+    // Give the player +1 life every 10 hit enemies.
     if (enemies_hit_counter % 10 == 0 && enemies_hit_counter != 0 &&
         counter_control == 1 && lives_left < MAX_LIVES) {
       lives_left += 1;
@@ -466,98 +466,98 @@ int main() {
     }
 
     draw_stats(bullet_counter, enemies_hit_counter);
-    draw_cannon(cannon_position, lives_left);
+    draw_ship(ship_position, lives_left);
 
     // Fetches the time at which the current frame is created.
     time_t current_time = time(NULL);
 
-    /* Target animation loop. In addition it controls the time at which a given
-       target should appear. */
-    for (int j = 0; j < MAX_TARGETS; ++j) {
-      if (reference_time + targets[j].time_to_appear - current_time == 0) {
-        targets[j].visible = true;
+    /* enemy animation loop. In addition it controls the time at which a given
+       enemy should appear. */
+    for (int j = 0; j < MAX_ENEMIES; ++j) {
+      if (reference_time + enemies[j].time_to_appear - current_time == 0) {
+        enemies[j].visible = true;
       }
 
-      if (targets[j].visible == true) {
-        draw_target(targets[j].x, targets[j].y, target_scales[1]);
-        move_target(&targets[j].x, &targets[j].y, targets[j].multiplier);
+      if (enemies[j].visible == true) {
+        draw_enemy(enemies[j].x, enemies[j].y, enemy_scales[1]);
+        move_enemy(&enemies[j].x, &enemies[j].y, enemies[j].multiplier);
 
-        if (targets[j].x > gfx_screenWidth()) {
-          targets[j].x = 0;
-        }
-      }
-    }
-
-    // Targets' bullets loop
-    for (int j = 0; j < MAX_TARGETS; ++j) {
-      if (targets[j].visible == true) {
-
-        if (rand() % 2500 < 10 && target_bullets[j].is_visible == false) {
-          target_bullets[j].should_shoot = true;
-        }
-
-        if (target_bullets[j].should_shoot == true) {
-          target_bullets[j].is_visible = true;
-          target_bullets[j].x = targets[j].x;
-          target_bullets[j].y = targets[j].y;
-          target_bullets[j].should_shoot = false;
-        }
-
-        if (target_bullets[j].is_visible == true) {
-          draw_target_bullet(target_bullets[j].x, target_bullets[j].y);
-          // moves targets' bullets
-          target_bullets[j].y += target_bullets[j].velocity;
+        if (enemies[j].x > gfx_screenWidth()) {
+          enemies[j].x = 0;
         }
       }
     }
 
-    // Hides the targets bullet if it exits the screen.
-    for (int j = 0; j < MAX_TARGETS; ++j) {
-      if (target_bullets[j].y >= gfx_screenHeight()) {
-        target_bullets[j].is_visible = false;
+    // enemies' bullets loop
+    for (int j = 0; j < MAX_ENEMIES; ++j) {
+      if (enemies[j].visible == true) {
+
+        if (rand() % 2500 < 10 && enemy_bullets[j].is_visible == false) {
+          enemy_bullets[j].should_shoot = true;
+        }
+
+        if (enemy_bullets[j].should_shoot == true) {
+          enemy_bullets[j].is_visible = true;
+          enemy_bullets[j].x = enemies[j].x;
+          enemy_bullets[j].y = enemies[j].y;
+          enemy_bullets[j].should_shoot = false;
+        }
+
+        if (enemy_bullets[j].is_visible == true) {
+          draw_enemy_bullet(enemy_bullets[j].x, enemy_bullets[j].y);
+          // moves enemies' bullets
+          enemy_bullets[j].y += enemy_bullets[j].velocity;
+        }
+      }
+    }
+
+    // Hides the enemies bullet if it exits the screen.
+    for (int j = 0; j < MAX_ENEMIES; ++j) {
+      if (enemy_bullets[j].y >= gfx_screenHeight()) {
+        enemy_bullets[j].is_visible = false;
       }
     }
 
     // Explosion animation loop.
-    for (int j = 0; j < MAX_TARGETS; ++j) {
+    for (int j = 0; j < MAX_ENEMIES; ++j) {
       explosions[j].scale = EXPLOSION_FRAMES - explosions[j].frames_left;
       if (explosions[j].frames_left != 0) {
         draw_explosion(explosions[j].x, explosions[j].y, explosions[j].scale);
         explosions[j].frames_left -= 1;
       }
 
-      target_bullets_explosions[j].scale =
-          EXPLOSION_FRAMES - target_bullets_explosions[j].frames_left;
-      if (target_bullets_explosions[j].frames_left != 0) {
-        draw_explosion(target_bullets_explosions[j].x,
-                       target_bullets_explosions[j].y,
-                       target_bullets_explosions[j].scale);
-        target_bullets_explosions[j].frames_left -= 1;
+      enemy_bullets_explosions[j].scale =
+          EXPLOSION_FRAMES - enemy_bullets_explosions[j].frames_left;
+      if (enemy_bullets_explosions[j].frames_left != 0) {
+        draw_explosion(enemy_bullets_explosions[j].x,
+                       enemy_bullets_explosions[j].y,
+                       enemy_bullets_explosions[j].scale);
+        enemy_bullets_explosions[j].frames_left -= 1;
       }
     }
 
     if (gfx_isKeyDown(SDLK_RIGHT)) {
-      cannon_position += CANNON_SPEED;
+      ship_position += SHIP_SPEED;
     }
 
     if (gfx_isKeyDown(SDLK_LEFT)) {
-      cannon_position -= CANNON_SPEED;
+      ship_position -= SHIP_SPEED;
     }
 
-    set_cannon_boundary(&cannon_position);
+    set_ship_boundary(&ship_position);
 
     if (should_shoot == true) {
       /* If more bullets are needed a new 'else if' segment has to be manually
          added. */
       if (bullets[0].visible == false) {
         bullets[0].visible = true;
-        shoot(&bullets[0], cannon_position);
+        shoot(&bullets[0], ship_position);
       } else if (bullets[1].visible == false) {
         bullets[1].visible = true;
-        shoot(&bullets[1], cannon_position);
+        shoot(&bullets[1], ship_position);
       } else if (bullets[2].visible == false) {
         bullets[2].visible = true;
-        shoot(&bullets[2], cannon_position);
+        shoot(&bullets[2], ship_position);
       }
 
       bullet_counter += 1;
@@ -578,32 +578,32 @@ int main() {
         bullets[i].visible = false;
       }
 
-      // Checks if any target was hit and provides approperiate consequences.
-      for (int j = 0; j < MAX_TARGETS; ++j) {
+      // Checks if any enemy was hit and provides approperiate consequences.
+      for (int j = 0; j < MAX_ENEMIES; ++j) {
         if (bullets[i].visible == true &&
-            is_hit(targets[j].x, targets[j].y, bullets[i].x, bullets[i].y)) {
+            is_hit(enemies[j].x, enemies[j].y, bullets[i].x, bullets[i].y)) {
 
           enemies_hit_counter += 1;
           counter_control = 1;
 
-          explosions[j].x = targets[j].x;
-          explosions[j].y = targets[j].y;
+          explosions[j].x = enemies[j].x;
+          explosions[j].y = enemies[j].y;
           explosions[j].frames_left = EXPLOSION_FRAMES;
 
           destroy_bullet(&bullets[i].visible);
-          destroy_target(&targets[j].x);
+          destroy_enemy(&enemies[j].x);
         }
-        if (target_bullets[j].is_visible == true &&
-            player_is_hit(target_bullets[j].x, target_bullets[j].y,
-                          cannon_position) == true) {
+        if (enemy_bullets[j].is_visible == true &&
+            player_is_hit(enemy_bullets[j].x, enemy_bullets[j].y,
+                          ship_position) == true) {
 
           lives_left -= 1;
 
-          target_bullets_explosions[j].x = target_bullets[j].x;
-          target_bullets_explosions[j].y = target_bullets[j].y;
-          target_bullets_explosions[j].frames_left = EXPLOSION_FRAMES;
+          enemy_bullets_explosions[j].x = enemy_bullets[j].x;
+          enemy_bullets_explosions[j].y = enemy_bullets[j].y;
+          enemy_bullets_explosions[j].frames_left = EXPLOSION_FRAMES;
 
-          destroy_target_bullet(&target_bullets[j].is_visible);
+          destroy_enemy_bullet(&enemy_bullets[j].is_visible);
         }
       }
     }
