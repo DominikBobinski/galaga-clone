@@ -30,7 +30,7 @@ struct Bullet {
   bool visible;
 };
 
-struct enemy {
+struct Enemy {
   float x;
   float y;
   float multiplier;
@@ -51,7 +51,7 @@ struct Star {
   int velocity;
 };
 
-struct enemy_bullet {
+struct Enemy_bullet {
   int y;
   int x;
   bool should_shoot;
@@ -278,14 +278,12 @@ void generate_star_pattern(int *star_x, float *star_y) {
 }
 
 // Draws a rectangular star at given coordinates.
-void draw_stars(int x, float y) {
+void draw_star(int x, float y) {
   gfx_filledRect(x - 1, y - 1, x + 1, y + 1, WHITE);
 }
 
 // Moves the created stars along the Y direction.
-void move_stars(float *star_y, int *star_velocity) {
-  *star_y += *star_velocity;
-}
+void move_star(float *star_y, int *star_velocity) { *star_y += *star_velocity; }
 
 void draw_enemy_bullet(int x, int y) {
   gfx_filledCircle(x, y + 2, 5, CYAN);
@@ -399,10 +397,10 @@ int main() {
     exit(3);
 
   struct Bullet bullets[MAX_BULLETS];
-  struct enemy enemies[MAX_ENEMIES];
+  struct Enemy enemies[MAX_ENEMIES];
   struct Star stars[STAR_AMOUNT];
   struct Explosion explosions[MAX_ENEMIES];
-  struct enemy_bullet enemy_bullets[MAX_ENEMIES];
+  struct Enemy_bullet enemy_bullets[MAX_ENEMIES];
   struct Explosion enemy_bullets_explosions[MAX_ENEMIES];
 
 START:
@@ -484,8 +482,8 @@ START:
 
     // Star animation loop.
     for (int i = 0; i < STAR_AMOUNT; ++i) {
-      draw_stars(stars[i].x, stars[i].y);
-      move_stars(&stars[i].y, &stars[i].velocity);
+      draw_star(stars[i].x, stars[i].y);
+      move_star(&stars[i].y, &stars[i].velocity);
       // Set star y to 0 if it exits the screen
       if (stars[i].y >= gfx_screenHeight()) {
         stars[i].y = 0;
