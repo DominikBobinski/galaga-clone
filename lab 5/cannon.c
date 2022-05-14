@@ -599,17 +599,12 @@ START:
     set_ship_boundary(&ship_position);
 
     if (should_shoot == true) {
-      /* If more bullets are needed a new 'else if' segment has to be manually
-         added. */
-      if (bullets[0].visible == false) {
-        bullets[0].visible = true;
-        shoot(&bullets[0], ship_position);
-      } else if (bullets[1].visible == false) {
-        bullets[1].visible = true;
-        shoot(&bullets[1], ship_position);
-      } else if (bullets[2].visible == false) {
-        bullets[2].visible = true;
-        shoot(&bullets[2], ship_position);
+      for (int i = 0; i < MAX_BULLETS; ++i) {
+        if (bullets[i].visible == false) {
+          bullets[i].visible = true;
+          shoot(&bullets[i], ship_position);
+          break;
+        }
       }
 
       stats.bullet_counter += 1;
