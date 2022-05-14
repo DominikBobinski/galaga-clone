@@ -62,6 +62,11 @@ struct Enemy_bullet {
   bool is_visible;
 };
 
+struct Stats {
+  int bullet_counter;
+  int enemies_hit_counter;
+};
+
 // Sets the initial bullet-ship distance and the bullet position.
 void shoot(struct Bullet *bullet, int ship_position) {
   bullet->distance = INITIAL_BULLET_DISTANCE_FROM_SHIP;
@@ -253,7 +258,7 @@ bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
 }
 
 // Draws the score table.
-void draw_stats(int bullet_counter, int enemies_hit_counter) {
+void draw_stats(struct Stats stats) {
   const char bullets_shot_text[14] = "Bullets shot:";
   const char enemies_hit_text[13] = "Enemies hit:";
   char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
@@ -266,9 +271,10 @@ void draw_stats(int bullet_counter, int enemies_hit_counter) {
   gfx_textout(gfx_screenWidth() - 140, gfx_screenHeight() - 25,
               enemies_hit_text, WHITE);
   gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 45,
-              SDL_itoa(bullet_counter, bullet_count_buffer, 10), WHITE);
+              SDL_itoa(stats.bullet_counter, bullet_count_buffer, 10), WHITE);
   gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 25,
-              SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), WHITE);
+              SDL_itoa(stats.enemies_hit_counter, enemies_hit_buffer, 10),
+              WHITE);
 }
 
 // Limits the ships movement to the screen width.
@@ -322,7 +328,7 @@ bool player_is_hit(int bullet_x, int bullet_y, int ship_position) {
 void destroy_enemy_bullet(bool *bullet) { *bullet = false; }
 
 // Shows the "game over" screen and allows to either exit or play again.
-void game_over(int bullet_counter, int enemies_hit_counter) {
+void game_over(struct Stats stats) {
   while (1) {
     int key_pressed = gfx_pollkey();
 
@@ -364,9 +370,10 @@ void game_over(int bullet_counter, int enemies_hit_counter) {
     gfx_textout(gfx_screenWidth() / 2 - 63, gfx_screenHeight() / 2 + 20,
                 enemies_hit_text, WHITE);
     gfx_textout(gfx_screenWidth() / 2 + 45, gfx_screenHeight() / 2,
-                SDL_itoa(bullet_counter, bullet_count_buffer, 10), WHITE);
+                SDL_itoa(stats.bullet_counter, bullet_count_buffer, 10), WHITE);
     gfx_textout(gfx_screenWidth() / 2 + 45, gfx_screenHeight() / 2 + 20,
-                SDL_itoa(enemies_hit_counter, enemies_hit_buffer, 10), WHITE);
+                SDL_itoa(stats.enemies_hit_counter, enemies_hit_buffer, 10),
+                WHITE);
 
     if (key_pressed == SDLK_ESCAPE) {
       exit(3);
@@ -390,15 +397,15 @@ int max_num_from_digits(int digits) {
 }
 
 // Sets the bullet or enemies hit counters to 0 if they exceed max digit limits.
-void control_digit_amount_in_scoreboard(int *bullet_counter,
-                                        int *enemies_hit_counter) {
-  if (*bullet_counter >= max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
-    *bullet_counter = 0;
+void control_digit_amount_in_scoreboard(struct Stats *stats) {
+  if (stats->bullet_counter >=
+      max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
+    stats->bullet_counter = 0;
   }
 
-  if (*enemies_hit_counter >=
+  if (stats->enemies_hit_counter >=
       max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
-    *enemies_hit_counter = 0;
+    stats->enemies_hit_counter = 0;
   }
 }
 
@@ -412,6 +419,7 @@ int main() {
   struct Explosion explosions[MAX_ENEMIES];
   struct Enemy_bullet enemy_bullets[MAX_ENEMIES];
   struct Explosion enemy_bullets_explosions[MAX_ENEMIES];
+  struct Stats stats = {.bullet_counter = 0, .enemies_hit_counter = 0};
 
 START:
 
@@ -463,9 +471,6 @@ START:
 
   bool should_shoot = false;
 
-  int bullet_counter = 0;
-  int enemies_hit_counter = 0;
-
   int lives_left = STARTING_LIVES;
 
   /* Scales that can be used for enemy sizes. Have to be careful as they aren't
@@ -478,10 +483,10 @@ START:
     if (gfx_pollkey() == SDLK_SPACE)
       should_shoot = true;
 
-    control_digit_amount_in_scoreboard(&bullet_counter, &enemies_hit_counter);
+    control_digit_amount_in_scoreboard(&stats);
 
     if (lives_left == 0) {
-      game_over(bullet_counter, enemies_hit_counter);
+      game_over(stats);
       goto START; /* Perhaps dumb? Goes backwards in code to where srand() is
                      ran and variables are being initialized. This is done to
                      reset all progress in the game in case the player chooses
@@ -501,14 +506,14 @@ START:
     }
 
     // Give the player +1 life every 10 hit enemies.
-    if (enemies_hit_counter % HITS_TO_GAIN_LIFE == 0 &&
-        enemies_hit_counter != 0 && counter_control == 1 &&
+    if (stats.enemies_hit_counter % HITS_TO_GAIN_LIFE == 0 &&
+        stats.enemies_hit_counter != 0 && counter_control == 1 &&
         lives_left < MAX_LIVES) {
       lives_left += 1;
       counter_control = 0;
     }
 
-    draw_stats(bullet_counter, enemies_hit_counter);
+    draw_stats(stats);
     draw_ship(ship_position, lives_left);
 
     // Fetches the time at which the current frame is created.
@@ -604,7 +609,7 @@ START:
         shoot(&bullets[2], ship_position);
       }
 
-      bullet_counter += 1;
+      stats.bullet_counter += 1;
       should_shoot = false;
     }
 
@@ -627,7 +632,7 @@ START:
         if (bullets[i].visible == true &&
             is_hit(enemies[j].x, enemies[j].y, bullets[i].x, bullets[i].y)) {
 
-          enemies_hit_counter += 1;
+          stats.enemies_hit_counter += 1;
           counter_control = 1;
 
           explosions[j].x = enemies[j].x;
