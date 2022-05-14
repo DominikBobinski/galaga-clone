@@ -419,9 +419,12 @@ int main() {
   struct Explosion explosions[MAX_ENEMIES];
   struct Enemy_bullet enemy_bullets[MAX_ENEMIES];
   struct Explosion enemy_bullets_explosions[MAX_ENEMIES];
-  struct Stats stats = {.bullet_counter = 0, .enemies_hit_counter = 0};
+  struct Stats stats;
 
 START:
+
+  stats.bullet_counter = 0;
+  stats.enemies_hit_counter = 0;
 
   srand(time(0));
 
