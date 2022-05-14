@@ -10,17 +10,20 @@
 #define MAX_BULLETS 3
 #define MIN_DISTANCE_FOR_HIT 27
 #define EXPLOSION_FRAMES 20
-#define BULLET_VELOCITY 15
-#define ENEMY_VELOCITY 3
+#define BULLET_VELOCITY 16
+#define ENEMY_VELOCITY 4
 #define AVERAGE_ENEMY_HEIGHT 80
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
-#define MAX_ENEMIES 6
+#define MAX_ENEMIES 5
 #define MAX_ENEMY_WAIT_TIME 15 // Sets time in seconds until enemy appears.
-#define SHIP_SPEED 4
+#define SHIP_SPEED 5
 #define STAR_AMOUNT 60
 #define SHIP_RELATIVE_Y (gfx_screenHeight() - 50)
 #define MAX_LIVES 5
-#define STARTING_LIVES 3
+#define STARTING_LIVES 2
+#define ENEMY_BULLET_VELOCITY 5
+#define HITS_TO_GAIN_LIFE 20
+#define ENEMY_SHOOT_CHANCE 2000 // Higher value lowers the chance of shooting.
 
 struct Bullet {
   int x;
@@ -221,6 +224,13 @@ void draw_ship(int ship_position, int lives_left) {
 
   for (int i = 1; i <= lives_left; ++i) {
     gfx_filledCircle(relative_x - 24 + i * 8, relative_y - 20, 3, RED);
+  }
+
+  if (lives_left == MAX_LIVES) {
+    gfx_filledCircle(relative_x - 5, relative_y - 2, 3, RED);
+    gfx_filledCircle(relative_x + 5, relative_y - 2, 3, RED);
+    gfx_circle(relative_x - 5, relative_y - 2, 1, MAGENTA);
+    gfx_circle(relative_x + 5, relative_y - 2, 1, MAGENTA);
   }
 }
 
@@ -434,7 +444,7 @@ START:
     enemy_bullets[i].y = 0;
     enemy_bullets[i].x = 0;
     enemy_bullets[i].should_shoot = false;
-    enemy_bullets[i].velocity = 4;
+    enemy_bullets[i].velocity = ENEMY_BULLET_VELOCITY;
     enemy_bullets[i].is_visible = false;
 
     explosions[i].x = 0;
@@ -491,8 +501,9 @@ START:
     }
 
     // Give the player +1 life every 10 hit enemies.
-    if (enemies_hit_counter % 10 == 0 && enemies_hit_counter != 0 &&
-        counter_control == 1 && lives_left < MAX_LIVES) {
+    if (enemies_hit_counter % HITS_TO_GAIN_LIFE == 0 &&
+        enemies_hit_counter != 0 && counter_control == 1 &&
+        lives_left < MAX_LIVES) {
       lives_left += 1;
       counter_control = 0;
     }
@@ -524,7 +535,8 @@ START:
     for (int j = 0; j < MAX_ENEMIES; ++j) {
       if (enemies[j].visible == true) {
 
-        if (rand() % 2500 < 10 && enemy_bullets[j].is_visible == false) {
+        if (rand() % ENEMY_SHOOT_CHANCE < 10 &&
+            enemy_bullets[j].is_visible == false) {
           enemy_bullets[j].should_shoot = true;
         }
 
