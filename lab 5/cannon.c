@@ -399,15 +399,10 @@ int main() {
     exit(3);
 
   struct Bullet bullets[MAX_BULLETS];
-
   struct enemy enemies[MAX_ENEMIES];
-
   struct Star stars[STAR_AMOUNT];
-
   struct Explosion explosions[MAX_ENEMIES];
-
   struct enemy_bullet enemy_bullets[MAX_ENEMIES];
-
   struct Explosion enemy_bullets_explosions[MAX_ENEMIES];
 
 START:
@@ -457,7 +452,6 @@ START:
 
   /* The default position is in the center of the screen */
   int ship_position = gfx_screenWidth() / 2;
-  ;
 
   bool should_shoot = false;
 
