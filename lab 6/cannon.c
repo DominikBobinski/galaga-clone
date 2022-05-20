@@ -414,17 +414,17 @@ int main() {
     exit(3);
 
   struct Bullet bullets[MAX_BULLETS];
-  struct Enemy enemies[MAX_ENEMIES];
   struct Star stars[STAR_AMOUNT];
+  struct Enemy enemies[MAX_ENEMIES];
   struct Explosion explosions[MAX_ENEMIES];
   struct Enemy_bullet enemy_bullets[MAX_ENEMIES];
   struct Explosion enemy_bullets_explosions[MAX_ENEMIES];
-  struct Stats stats;
 
-START:
+START:;
 
-  stats.bullet_counter = 0;
-  stats.enemies_hit_counter = 0;
+  int current_enemies = 3;
+
+  struct Stats stats = {.bullet_counter = 0, .enemies_hit_counter = 0};
 
   srand(time(0));
 
@@ -524,7 +524,7 @@ START:
 
     /* enemy animation loop. In addition it controls the time at which a given
        enemy should appear. */
-    for (int j = 0; j < MAX_ENEMIES; ++j) {
+    for (int j = 0; j < current_enemies; ++j) {
       if (reference_time + enemies[j].time_to_appear - current_time == 0) {
         enemies[j].visible = true;
       }
@@ -540,7 +540,7 @@ START:
     }
 
     // enemies' bullets loop
-    for (int j = 0; j < MAX_ENEMIES; ++j) {
+    for (int j = 0; j < current_enemies; ++j) {
       if (enemies[j].visible == true) {
 
         if (rand() % ENEMY_SHOOT_CHANCE < 10 &&
@@ -564,14 +564,14 @@ START:
     }
 
     // Hides the enemies bullet if it exits the screen.
-    for (int j = 0; j < MAX_ENEMIES; ++j) {
+    for (int j = 0; j < current_enemies; ++j) {
       if (enemy_bullets[j].y >= gfx_screenHeight()) {
         enemy_bullets[j].is_visible = false;
       }
     }
 
     // Explosion animation loop.
-    for (int j = 0; j < MAX_ENEMIES; ++j) {
+    for (int j = 0; j < current_enemies; ++j) {
       explosions[j].scale = EXPLOSION_FRAMES - explosions[j].frames_left;
       if (explosions[j].frames_left != 0) {
         draw_explosion(explosions[j].x, explosions[j].y, explosions[j].scale);
@@ -626,7 +626,7 @@ START:
       }
 
       // Checks if any enemy was hit and provides approperiate consequences.
-      for (int j = 0; j < MAX_ENEMIES; ++j) {
+      for (int j = 0; j < current_enemies; ++j) {
         if (bullets[i].visible == true &&
             is_hit(enemies[j].x, enemies[j].y, bullets[i].x, bullets[i].y)) {
 
