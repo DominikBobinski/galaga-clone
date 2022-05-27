@@ -24,6 +24,8 @@
 #define ENEMY_BULLET_VELOCITY 5
 #define HITS_TO_GAIN_LIFE 20
 #define ENEMY_SHOOT_CHANCE 2000 // Higher value lowers the chance of shooting.
+#define MAX_LEVEL 10
+#define LEVEL_ZERO_ENEMIES 3
 
 struct Bullet {
   int x;
@@ -65,6 +67,12 @@ struct Enemy_bullet {
 struct Stats {
   int bullet_counter;
   int enemies_hit_counter;
+};
+
+struct Level {
+  int max_enemies;
+  int current_enemies;
+  int enemy_characteristic;
 };
 
 // Sets the initial bullet-ship distance and the bullet position.
@@ -419,10 +427,21 @@ int main() {
   struct Explosion explosions[MAX_ENEMIES];
   struct Enemy_bullet enemy_bullets[MAX_ENEMIES];
   struct Explosion enemy_bullets_explosions[MAX_ENEMIES];
+  struct Level levels[MAX_LEVEL];
+
+  /* Initializes the amount of enemies per level and their characteristic
+   modifier */
+  for (int l = 0; l < MAX_LEVEL; ++l) {
+    levels[l].max_enemies = LEVEL_ZERO_ENEMIES + l;
+    // The amount of enemies per level is still limited by MAX_ENEMIES.
+    if (levels[l].max_enemies > MAX_ENEMIES) {
+      levels[l].max_enemies = MAX_ENEMIES;
+    }
+    levels[l].current_enemies = levels[l].max_enemies;
+    levels[l].enemy_characteristic = l + 1;
+  }
 
 START:;
-
-  int current_enemies = 3;
 
   struct Stats stats = {.bullet_counter = 0, .enemies_hit_counter = 0};
 
@@ -482,6 +501,8 @@ START:;
 
   int counter_control = 0;
 
+  int current_level = 0;
+
   while (1) {
     if (gfx_pollkey() == SDLK_SPACE)
       should_shoot = true;
@@ -494,6 +515,12 @@ START:;
                      ran and variables are being initialized. This is done to
                      reset all progress in the game in case the player chooses
                      to play again. */
+    }
+
+    // Increase level when all enemies get shot down.
+    if (levels[current_level].current_enemies == 0) {
+      reference_time = time(NULL);
+      current_level += 1;
     }
 
     draw_background();
@@ -524,7 +551,7 @@ START:;
 
     /* enemy animation loop. In addition it controls the time at which a given
        enemy should appear. */
-    for (int j = 0; j < current_enemies; ++j) {
+    for (int j = 0; j < levels[current_level].max_enemies; ++j) {
       if (reference_time + enemies[j].time_to_appear - current_time == 0) {
         enemies[j].visible = true;
       }
@@ -540,7 +567,7 @@ START:;
     }
 
     // enemies' bullets loop
-    for (int j = 0; j < current_enemies; ++j) {
+    for (int j = 0; j < levels[current_level].max_enemies; ++j) {
       if (rand() % ENEMY_SHOOT_CHANCE < 10 &&
           enemy_bullets[j].is_visible == false && enemies[j].visible == true) {
         enemy_bullets[j].should_shoot = true;
@@ -561,14 +588,14 @@ START:;
     }
 
     // Hides the enemies bullet if it exits the screen.
-    for (int j = 0; j < current_enemies; ++j) {
+    for (int j = 0; j < levels[current_level].max_enemies; ++j) {
       if (enemy_bullets[j].y >= gfx_screenHeight()) {
         enemy_bullets[j].is_visible = false;
       }
     }
 
     // Explosion animation loop.
-    for (int j = 0; j < current_enemies; ++j) {
+    for (int j = 0; j < levels[current_level].max_enemies; ++j) {
       explosions[j].scale = EXPLOSION_FRAMES - explosions[j].frames_left;
       if (explosions[j].frames_left != 0) {
         draw_explosion(explosions[j].x, explosions[j].y, explosions[j].scale);
@@ -624,7 +651,7 @@ START:;
     }
 
     // Checks if anyone is hit and provides approperiate consequences.
-    for (int j = 0; j < current_enemies; ++j) {
+    for (int j = 0; j < levels[current_level].max_enemies; ++j) {
       for (int i = 0; i < MAX_BULLETS; ++i) {
         if (bullets[i].visible == true &&
             is_hit(enemies[j].x, enemies[j].y, bullets[i].x, bullets[i].y)) {
@@ -636,6 +663,7 @@ START:;
           explosions[j].y = enemies[j].y;
           explosions[j].frames_left = EXPLOSION_FRAMES;
 
+          levels[current_level].current_enemies -= 1;
           enemies[j].visible = false;
 
           destroy_bullet(&bullets[i].visible);
