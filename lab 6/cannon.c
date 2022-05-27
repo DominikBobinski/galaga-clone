@@ -541,25 +541,22 @@ START:;
 
     // enemies' bullets loop
     for (int j = 0; j < current_enemies; ++j) {
-      if (enemies[j].visible == true) {
+      if (rand() % ENEMY_SHOOT_CHANCE < 10 &&
+          enemy_bullets[j].is_visible == false && enemies[j].visible == true) {
+        enemy_bullets[j].should_shoot = true;
+      }
 
-        if (rand() % ENEMY_SHOOT_CHANCE < 10 &&
-            enemy_bullets[j].is_visible == false) {
-          enemy_bullets[j].should_shoot = true;
-        }
+      if (enemy_bullets[j].should_shoot == true) {
+        enemy_bullets[j].is_visible = true;
+        enemy_bullets[j].x = enemies[j].x;
+        enemy_bullets[j].y = enemies[j].y;
+        enemy_bullets[j].should_shoot = false;
+      }
 
-        if (enemy_bullets[j].should_shoot == true) {
-          enemy_bullets[j].is_visible = true;
-          enemy_bullets[j].x = enemies[j].x;
-          enemy_bullets[j].y = enemies[j].y;
-          enemy_bullets[j].should_shoot = false;
-        }
-
-        if (enemy_bullets[j].is_visible == true) {
-          draw_enemy_bullet(enemy_bullets[j].x, enemy_bullets[j].y);
-          // moves enemies' bullets
-          enemy_bullets[j].y += enemy_bullets[j].velocity;
-        }
+      if (enemy_bullets[j].is_visible == true) {
+        draw_enemy_bullet(enemy_bullets[j].x, enemy_bullets[j].y);
+        // moves enemies' bullets
+        enemy_bullets[j].y += enemy_bullets[j].velocity;
       }
     }
 
@@ -638,6 +635,8 @@ START:;
           explosions[j].x = enemies[j].x;
           explosions[j].y = enemies[j].y;
           explosions[j].frames_left = EXPLOSION_FRAMES;
+
+          enemies[j].visible = false;
 
           destroy_bullet(&bullets[i].visible);
           destroy_enemy(&enemies[j].x);
