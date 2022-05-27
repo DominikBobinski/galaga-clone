@@ -624,9 +624,11 @@ START:;
       if (is_bullet_out_of_bounds(bullets[i].x, bullets[i].y)) {
         bullets[i].visible = false;
       }
+    }
 
-      // Checks if any enemy was hit and provides approperiate consequences.
-      for (int j = 0; j < current_enemies; ++j) {
+    // Checks if anyone is hit and provides approperiate consequences.
+    for (int j = 0; j < current_enemies; ++j) {
+      for (int i = 0; i < MAX_BULLETS; ++i) {
         if (bullets[i].visible == true &&
             is_hit(enemies[j].x, enemies[j].y, bullets[i].x, bullets[i].y)) {
 
@@ -640,6 +642,7 @@ START:;
           destroy_bullet(&bullets[i].visible);
           destroy_enemy(&enemies[j].x);
         }
+
         if (enemy_bullets[j].is_visible == true &&
             player_is_hit(enemy_bullets[j].x, enemy_bullets[j].y,
                           ship_position) == true) {
@@ -654,6 +657,7 @@ START:;
         }
       }
     }
+
     gfx_updateScreen();
 
     SDL_Delay(10);
