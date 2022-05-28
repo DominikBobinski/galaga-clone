@@ -41,6 +41,7 @@ struct Enemy {
   float multiplier;
   bool visible;
   int time_to_appear;
+  int direction;
 };
 
 struct Explosion {
@@ -135,18 +136,27 @@ void draw_enemy(float x_enemy, float y_enemy, float scale) {
 
 // Move enemy in a sinusoid path.
 void move_enemy(float *x_enemy, float *y_enemy, float enemy_multiplier,
-                float enemy_characteristic) {
+                float enemy_characteristic, int direction) {
   const int y_amplitude = 20;
   const double vertical_displacement = y_amplitude * sin(*x_enemy * 0.02);
   *y_enemy = (AVERAGE_ENEMY_HEIGHT + vertical_displacement) * enemy_multiplier;
-  *x_enemy += ENEMY_VELOCITY + enemy_multiplier * 0.1 * enemy_characteristic;
+  *x_enemy += direction *
+              (ENEMY_VELOCITY + enemy_multiplier * 0.1 * enemy_characteristic);
 }
 
 // Removes the bullet that hit a enemy.
 void destroy_bullet(bool *bullet) { *bullet = false; }
 
 // Resets the hit enemy's position.
-void destroy_enemy(float *x_enemy) { *x_enemy = 0; }
+void destroy_enemy(float *x_enemy, int *direction) {
+  if (rand() % 2 == 0) {
+    *x_enemy = 0;
+    *direction = 1;
+  } else {
+    *x_enemy = gfx_screenWidth();
+    *direction = -1;
+  }
+}
 
 // Detects if a bullet came in contact with a enemy, returns true or false.
 bool is_hit(float x_enemy, float y_enemy, int bullet_x, int bullet_y) {
@@ -509,6 +519,14 @@ START:;
     enemies[i].multiplier = rand() % 5 + 1 + i * 0.1 * pow(-1, i);
     enemies[i].time_to_appear = rand() % MAX_ENEMY_WAIT_TIME;
 
+    if (rand() % 2 == 0) {
+      enemies[i].x = 0;
+      enemies[i].direction = 1;
+    } else {
+      enemies[i].x = gfx_screenWidth();
+      enemies[i].direction = -1;
+    }
+
     enemy_bullets[i].y = 0;
     enemy_bullets[i].x = 0;
     enemy_bullets[i].should_shoot = false;
@@ -598,10 +616,11 @@ START:;
       if (enemies[j].visible == true) {
         draw_enemy(enemies[j].x, enemies[j].y, enemy_scales[1]);
         move_enemy(&enemies[j].x, &enemies[j].y, enemies[j].multiplier,
-                   levels[stats.current_level].enemy_characteristic);
+                   levels[stats.current_level].enemy_characteristic,
+                   enemies[j].direction);
 
-        if (enemies[j].x > gfx_screenWidth()) {
-          enemies[j].x = 0;
+        if (enemies[j].x > gfx_screenWidth() || enemies[j].x - 1 < 0) {
+          enemies[j].direction *= -1;
         }
       }
     }
@@ -711,7 +730,7 @@ START:;
           enemies[j].visible = false;
 
           destroy_bullet(&bullets[i].visible);
-          destroy_enemy(&enemies[j].x);
+          destroy_enemy(&enemies[j].x, &enemies[j].direction);
         }
 
         if (enemy_bullets[j].is_visible == true &&
