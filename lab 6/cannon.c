@@ -24,7 +24,7 @@
 #define ENEMY_BULLET_VELOCITY 5
 #define HITS_TO_GAIN_LIFE 20
 #define ENEMY_SHOOT_CHANCE 2000 // Higher value lowers the chance of shooting.
-#define MAX_LEVEL 10
+#define MAX_LEVEL 5
 #define LEVEL_ZERO_ENEMIES 3
 
 struct Bullet {
