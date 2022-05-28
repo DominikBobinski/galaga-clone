@@ -9,20 +9,20 @@
 #define INITIAL_BULLET_DISTANCE_FROM_SHIP 110
 #define MAX_BULLETS 3
 #define MIN_DISTANCE_FOR_HIT 27
-#define EXPLOSION_FRAMES 20
-#define BULLET_VELOCITY 16
-#define ENEMY_VELOCITY 4
+#define EXPLOSION_FRAMES 10
+#define BULLET_VELOCITY 20
+#define ENEMY_VELOCITY 5
 #define AVERAGE_ENEMY_HEIGHT 80
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
 #define MAX_ENEMIES 15
-#define MAX_ENEMY_WAIT_TIME 15 // Sets time in seconds until enemy appears.
-#define SHIP_SPEED 10
+#define MAX_ENEMY_WAIT_TIME 4 // Sets time in seconds until enemy appears.
+#define SHIP_SPEED 18
 #define STAR_AMOUNT 60
 #define SHIP_RELATIVE_Y (gfx_screenHeight() - 50)
 #define MAX_LIVES 5
 #define STARTING_LIVES 2
-#define ENEMY_BULLET_VELOCITY 5
-#define HITS_TO_GAIN_LIFE 20
+#define ENEMY_BULLET_VELOCITY 7
+#define HITS_TO_GAIN_LIFE 10
 #define ENEMY_SHOOT_CHANCE 2000 // Higher value lowers the chance of shooting.
 #define MAX_LEVEL 5
 #define LEVEL_ZERO_ENEMIES 3
