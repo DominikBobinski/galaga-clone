@@ -264,7 +264,7 @@ void draw_bullet(int x_bullet, int y_bullet) {
 
 // Checks if the bullet left the screen, returns true or false.
 bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
-  return bullet_y <= 0 || bullet_x <= 0 || bullet_x >= gfx_screenWidth();
+  return bullet_y < 0 || bullet_x < 0 || bullet_x > gfx_screenWidth();
 }
 
 // Draws the score table.
