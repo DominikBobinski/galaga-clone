@@ -348,20 +348,34 @@ void game_over(struct Stats stats) {
   while (1) {
     int key_pressed = gfx_pollkey();
 
+    int frame_color = 0;
+
     const char game_over[10] = "GAME OVER";
+    const char you_win[9] = "YOU WIN!";
     const char press_esc[19] = "PRESS ESC TO QUIT";
     const char press_space[26] = "PRESS SPACE TO PLAY AGAIN";
     const char final_score[13] = "Final Score:";
 
     draw_background();
 
-    gfx_rect(gfx_screenWidth() / 2 - 500, gfx_screenHeight() / 2 - 200,
-             gfx_screenWidth() / 2 + 500, gfx_screenHeight() / 2 + 200, WHITE);
-    gfx_rect(gfx_screenWidth() / 2 - 495, gfx_screenHeight() / 2 - 195,
-             gfx_screenWidth() / 2 + 495, gfx_screenHeight() / 2 + 195, WHITE);
+    if (stats.current_level == MAX_LEVEL) {
+      frame_color = GREEN;
+      gfx_textout(gfx_screenWidth() / 2 - 32, gfx_screenHeight() / 2 - 100,
+                  you_win, frame_color);
 
-    gfx_textout(gfx_screenWidth() / 2 - 35, gfx_screenHeight() / 2 - 100,
-                game_over, WHITE);
+    } else {
+      frame_color = RED;
+      gfx_textout(gfx_screenWidth() / 2 - 35, gfx_screenHeight() / 2 - 100,
+                  game_over, frame_color);
+    }
+
+    gfx_rect(gfx_screenWidth() / 2 - 500, gfx_screenHeight() / 2 - 200,
+             gfx_screenWidth() / 2 + 500, gfx_screenHeight() / 2 + 200,
+             frame_color);
+    gfx_rect(gfx_screenWidth() / 2 - 495, gfx_screenHeight() / 2 - 195,
+             gfx_screenWidth() / 2 + 495, gfx_screenHeight() / 2 + 195,
+             frame_color);
+
     gfx_line(gfx_screenWidth() / 2 - 45, gfx_screenHeight() / 2 - 90,
              gfx_screenWidth() / 2 + 45, gfx_screenHeight() / 2 - 90, WHITE);
 
@@ -449,6 +463,8 @@ int main() {
   struct Explosion enemy_bullets_explosions[MAX_ENEMIES];
   struct Level levels[MAX_LEVEL];
 
+START:;
+
   /* Initializes the amount of enemies per level and their characteristic
    modifier */
   for (int l = 0; l < MAX_LEVEL; ++l) {
@@ -461,9 +477,8 @@ int main() {
     levels[l].enemy_characteristic = l + 1;
   }
 
-START:;
-
-  struct Stats stats = {.bullet_counter = 0, .enemies_hit_counter = 0};
+  struct Stats stats = {
+      .bullet_counter = 0, .enemies_hit_counter = 0, .current_level = 0};
 
   srand(time(0));
 
@@ -521,8 +536,6 @@ START:;
 
   int counter_control = 0;
 
-  stats.current_level = 0;
-
   while (1) {
     int pressed_key = gfx_pollkey();
 
@@ -534,18 +547,18 @@ START:;
 
     control_digit_amount_in_scoreboard(&stats);
 
-    if (lives_left == 0) {
+    // Increase level when all enemies get shot down.
+    if (levels[stats.current_level].current_enemies == 0) {
+      reference_time = time(NULL);
+      stats.current_level += 1;
+    }
+
+    if (lives_left == 0 || stats.current_level == MAX_LEVEL) {
       game_over(stats);
       goto START; /* Perhaps dumb? Goes backwards in code to where srand() is
                      ran and variables are being initialized. This is done to
                      reset all progress in the game in case the player chooses
                      to play again. */
-    }
-
-    // Increase level when all enemies get shot down.
-    if (levels[stats.current_level].current_enemies == 0) {
-      reference_time = time(NULL);
-      stats.current_level += 1;
     }
 
     draw_background();
