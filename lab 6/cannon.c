@@ -514,35 +514,35 @@ START:;
   }
 
   // Initializes some variables of enemies and explosions.
-  for (int i = 0; i < MAX_ENEMIES; ++i) {
-    enemies[i].x = 0;
-    enemies[i].y = AVERAGE_ENEMY_HEIGHT;
-    enemies[i].multiplier = rand() % 5 + 1 + i * 0.1 * pow(-1, i);
-    enemies[i].time_to_appear = rand() % MAX_ENEMY_WAIT_TIME;
+  for (int j = 0; j < MAX_ENEMIES; ++j) {
+    enemies[j].x = 0;
+    enemies[j].y = AVERAGE_ENEMY_HEIGHT;
+    enemies[j].multiplier = rand() % 5 + 1 + j * 0.1 * pow(-1, j);
+    enemies[j].time_to_appear = rand() % MAX_ENEMY_WAIT_TIME;
 
     if (rand() % 2 == 0) {
-      enemies[i].x = 0;
-      enemies[i].direction = 1;
+      enemies[j].x = 0;
+      enemies[j].direction = 1;
     } else {
-      enemies[i].x = gfx_screenWidth();
-      enemies[i].direction = -1;
+      enemies[j].x = gfx_screenWidth();
+      enemies[j].direction = -1;
     }
 
-    enemy_bullets[i].y = 0;
-    enemy_bullets[i].x = 0;
-    enemy_bullets[i].should_shoot = false;
-    enemy_bullets[i].velocity = ENEMY_BULLET_VELOCITY;
-    enemy_bullets[i].is_visible = false;
+    enemy_bullets[j].y = 0;
+    enemy_bullets[j].x = 0;
+    enemy_bullets[j].should_shoot = false;
+    enemy_bullets[j].velocity = ENEMY_BULLET_VELOCITY;
+    enemy_bullets[j].is_visible = false;
 
-    explosions[i].x = 0;
-    explosions[i].y = 0;
-    explosions[i].frames_left = 0;
-    explosions[i].scale = 0;
+    explosions[j].x = 0;
+    explosions[j].y = 0;
+    explosions[j].frames_left = 0;
+    explosions[j].scale = 0;
 
-    enemy_bullets_explosions[i].x = 0;
-    enemy_bullets_explosions[i].y = 0;
-    enemy_bullets_explosions[i].frames_left = 0;
-    enemy_bullets_explosions[i].scale = 0;
+    enemy_bullets_explosions[j].x = 0;
+    enemy_bullets_explosions[j].y = 0;
+    enemy_bullets_explosions[j].frames_left = 0;
+    enemy_bullets_explosions[j].scale = 0;
   }
 
   /* The default position is in the center of the screen */
