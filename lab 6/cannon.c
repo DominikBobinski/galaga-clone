@@ -67,6 +67,7 @@ struct Enemy_bullet {
 struct Stats {
   int bullet_counter;
   int enemies_hit_counter;
+  int current_level;
 };
 
 struct Level {
@@ -273,17 +274,23 @@ void draw_stats(struct Stats stats) {
   char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
   char enemies_hit_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
 
-  gfx_rect(gfx_screenWidth() - 150, gfx_screenHeight() - 57, gfx_screenWidth(),
+  gfx_rect(gfx_screenWidth() - 146, gfx_screenHeight() - 53, gfx_screenWidth(),
            gfx_screenHeight(), WHITE);
-  gfx_textout(gfx_screenWidth() - 140, gfx_screenHeight() - 45,
+  gfx_textout(gfx_screenWidth() - 140, gfx_screenHeight() - 46,
               bullets_shot_text, WHITE);
-  gfx_textout(gfx_screenWidth() - 140, gfx_screenHeight() - 25,
+  gfx_textout(gfx_screenWidth() - 140, gfx_screenHeight() - 30,
               enemies_hit_text, WHITE);
-  gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 45,
+  gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 46,
               SDL_itoa(stats.bullet_counter, bullet_count_buffer, 10), WHITE);
-  gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 25,
+  gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 30,
               SDL_itoa(stats.enemies_hit_counter, enemies_hit_buffer, 10),
               WHITE);
+
+  const char level[6] = "Level:";
+  char current_level_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
+  gfx_textout(gfx_screenWidth() - 140, gfx_screenHeight() - 14, level, WHITE);
+  gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 14,
+              SDL_itoa(stats.current_level, current_level_buffer, 10), WHITE);
 }
 
 // Limits the ships movement to the screen width.
@@ -361,7 +368,7 @@ void game_over(struct Stats stats) {
     gfx_textout(gfx_screenWidth() / 2 - 45, gfx_screenHeight() / 2 - 20,
                 final_score, WHITE);
     gfx_rect(gfx_screenWidth() / 2 - 80, gfx_screenHeight() / 2 - 30,
-             gfx_screenWidth() / 2 + 80, gfx_screenHeight() / 2 + 40, WHITE);
+             gfx_screenWidth() / 2 + 80, gfx_screenHeight() / 2 + 65, WHITE);
 
     gfx_textout(gfx_screenWidth() / 2 - 100, gfx_screenHeight() / 2 + 80,
                 press_space, WHITE);
@@ -383,6 +390,13 @@ void game_over(struct Stats stats) {
     gfx_textout(gfx_screenWidth() / 2 + 45, gfx_screenHeight() / 2 + 20,
                 SDL_itoa(stats.enemies_hit_counter, enemies_hit_buffer, 10),
                 WHITE);
+
+    const char level[6] = "Level:";
+    char current_level_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
+    gfx_textout(gfx_screenWidth() / 2 - 63, gfx_screenHeight() / 2 + 40, level,
+                WHITE);
+    gfx_textout(gfx_screenWidth() / 2 + 45, gfx_screenHeight() / 2 + 40,
+                SDL_itoa(stats.current_level, current_level_buffer, 10), WHITE);
 
     if (key_pressed == SDLK_ESCAPE) {
       exit(3);
@@ -415,6 +429,11 @@ void control_digit_amount_in_scoreboard(struct Stats *stats) {
   if (stats->enemies_hit_counter >=
       max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
     stats->enemies_hit_counter = 0;
+  }
+
+  if (stats->current_level >=
+      max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
+    stats->current_level = 0;
   }
 }
 
@@ -502,7 +521,7 @@ START:;
 
   int counter_control = 0;
 
-  int current_level = 0;
+  stats.current_level = 0;
 
   while (1) {
     if (gfx_pollkey() == SDLK_SPACE)
@@ -519,9 +538,9 @@ START:;
     }
 
     // Increase level when all enemies get shot down.
-    if (levels[current_level].current_enemies == 0) {
+    if (levels[stats.current_level].current_enemies == 0) {
       reference_time = time(NULL);
-      current_level += 1;
+      stats.current_level += 1;
     }
 
     draw_background();
@@ -552,7 +571,7 @@ START:;
 
     /* enemy animation loop. In addition it controls the time at which a given
        enemy should appear. */
-    for (int j = 0; j < levels[current_level].max_enemies; ++j) {
+    for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
       if (reference_time + enemies[j].time_to_appear - current_time == 0) {
         enemies[j].visible = true;
       }
@@ -560,7 +579,7 @@ START:;
       if (enemies[j].visible == true) {
         draw_enemy(enemies[j].x, enemies[j].y, enemy_scales[1]);
         move_enemy(&enemies[j].x, &enemies[j].y, enemies[j].multiplier,
-                   levels[current_level].enemy_characteristic);
+                   levels[stats.current_level].enemy_characteristic);
 
         if (enemies[j].x > gfx_screenWidth()) {
           enemies[j].x = 0;
@@ -569,7 +588,7 @@ START:;
     }
 
     // enemies' bullets loop
-    for (int j = 0; j < levels[current_level].max_enemies; ++j) {
+    for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
       if (rand() % ENEMY_SHOOT_CHANCE < 10 &&
           enemy_bullets[j].is_visible == false && enemies[j].visible == true) {
         enemy_bullets[j].should_shoot = true;
@@ -585,20 +604,21 @@ START:;
       if (enemy_bullets[j].is_visible == true) {
         draw_enemy_bullet(enemy_bullets[j].x, enemy_bullets[j].y);
         // moves enemies' bullets
-        enemy_bullets[j].y += enemy_bullets[j].velocity +
-                              levels[current_level].enemy_characteristic * 0.6;
+        enemy_bullets[j].y +=
+            enemy_bullets[j].velocity +
+            levels[stats.current_level].enemy_characteristic * 0.6;
       }
     }
 
     // Hides the enemies bullet if it exits the screen.
-    for (int j = 0; j < levels[current_level].max_enemies; ++j) {
+    for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
       if (enemy_bullets[j].y >= gfx_screenHeight()) {
         enemy_bullets[j].is_visible = false;
       }
     }
 
     // Explosion animation loop.
-    for (int j = 0; j < levels[current_level].max_enemies; ++j) {
+    for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
       explosions[j].scale = EXPLOSION_FRAMES - explosions[j].frames_left;
       if (explosions[j].frames_left != 0) {
         draw_explosion(explosions[j].x, explosions[j].y, explosions[j].scale);
@@ -654,7 +674,7 @@ START:;
     }
 
     // Checks if anyone is hit and provides approperiate consequences.
-    for (int j = 0; j < levels[current_level].max_enemies; ++j) {
+    for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
       for (int i = 0; i < MAX_BULLETS; ++i) {
         if (bullets[i].visible == true &&
             is_hit(enemies[j].x, enemies[j].y, bullets[i].x, bullets[i].y)) {
@@ -666,7 +686,7 @@ START:;
           explosions[j].y = enemies[j].y;
           explosions[j].frames_left = EXPLOSION_FRAMES;
 
-          levels[current_level].current_enemies -= 1;
+          levels[stats.current_level].current_enemies -= 1;
           enemies[j].visible = false;
 
           destroy_bullet(&bullets[i].visible);
