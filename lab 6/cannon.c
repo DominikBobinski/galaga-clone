@@ -594,7 +594,9 @@ START:;
 
     // enemies' bullets loop
     for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
-      if (rand() % ENEMY_SHOOT_CHANCE < 10 &&
+      if (rand() % ENEMY_SHOOT_CHANCE -
+                  levels[stats.current_level].enemy_characteristic * 30 <
+              10 &&
           enemy_bullets[j].is_visible == false && enemies[j].visible == true) {
         enemy_bullets[j].should_shoot = true;
       }
