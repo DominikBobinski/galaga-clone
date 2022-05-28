@@ -524,8 +524,13 @@ START:;
   stats.current_level = 0;
 
   while (1) {
-    if (gfx_pollkey() == SDLK_SPACE)
+    int pressed_key = gfx_pollkey();
+
+    if (pressed_key == SDLK_SPACE)
       should_shoot = true;
+
+    if (pressed_key == SDLK_ESCAPE)
+      exit(3);
 
     control_digit_amount_in_scoreboard(&stats);
 
