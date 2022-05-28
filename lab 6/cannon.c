@@ -302,7 +302,8 @@ void draw_stats(struct Stats stats) {
   char current_level_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
   gfx_textout(gfx_screenWidth() - 140, gfx_screenHeight() - 14, level, WHITE);
   gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 14,
-              SDL_itoa(stats.current_level, current_level_buffer, 10), WHITE);
+              SDL_itoa(stats.current_level + 1, current_level_buffer, 10),
+              WHITE);
 }
 
 // Limits the ships movement to the screen width.
@@ -423,7 +424,8 @@ void game_over(struct Stats stats) {
     gfx_textout(gfx_screenWidth() / 2 - 63, gfx_screenHeight() / 2 + 40, level,
                 WHITE);
     gfx_textout(gfx_screenWidth() / 2 + 45, gfx_screenHeight() / 2 + 40,
-                SDL_itoa(stats.current_level, current_level_buffer, 10), WHITE);
+                SDL_itoa(stats.current_level + 1, current_level_buffer, 10),
+                WHITE);
 
     if (key_pressed == SDLK_ESCAPE) {
       exit(3);
@@ -636,11 +638,10 @@ START:;
 
       if (stats.current_level == MAX_LEVEL) {
         goto END_GAME;
+      } else {
+        level_transition(stars, stats, ship_position, frame_time);
+        game_start_time = time(NULL);
       }
-
-      level_transition(stars, stats, ship_position, frame_time);
-      stats.current_level += 1;
-      game_start_time = time(NULL);
     }
 
     if (stats.lives_left == 0 || stats.current_level == MAX_LEVEL) {
