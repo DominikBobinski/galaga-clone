@@ -477,6 +477,11 @@ int main() {
 
 START:;
 
+  srand(time(0));
+
+  // Fetches the time at which the game starts.
+  time_t game_start_time = time(NULL);
+
   /* Initializes the amount of enemies per level and their characteristic
    modifier */
   for (int l = 0; l < MAX_LEVEL; ++l) {
@@ -493,11 +498,6 @@ START:;
                         .enemies_hit_counter = 0,
                         .current_level = 0,
                         .lives_left = STARTING_LIVES};
-
-  srand(time(0));
-
-  // Fetches the time at which the game starts.
-  time_t reference_time = time(NULL);
 
   for (int i = 0; i < MAX_BULLETS; ++i) {
     bullets[i].x = 0;
@@ -558,6 +558,8 @@ START:;
   int counter_control = 0;
 
   while (1) {
+    time_t frame_start_time = time(NULL);
+
     int pressed_key = gfx_pollkey();
 
     if (pressed_key == SDLK_SPACE)
@@ -573,7 +575,7 @@ START:;
 
     // Increase level when all enemies get shot down.
     if (levels[stats.current_level].current_enemies == 0) {
-      reference_time = time(NULL);
+      game_start_time = time(NULL);
       stats.current_level += 1;
     }
 
@@ -608,13 +610,10 @@ START:;
     draw_stats(stats);
     draw_ship(ship_position, stats.lives_left);
 
-    // Fetches the time at which the current frame is created.
-    time_t current_time = time(NULL);
-
     /* enemy animation loop. In addition it controls the time at which a given
        enemy should appear. */
     for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
-      if (reference_time + enemies[j].time_to_appear - current_time == 0) {
+      if (game_start_time + enemies[j].time_to_appear - frame_start_time == 0) {
         enemies[j].visible = true;
       }
 
@@ -753,9 +752,11 @@ START:;
       }
     }
 
-    gfx_updateScreen();
+    time_t frame_end_time = time(NULL);
+    time_t frame_time = frame_start_time - frame_end_time;
 
-    SDL_Delay(10);
+    gfx_updateScreen();
+    SDL_Delay(16.6666 - frame_time);
   }
   return 0;
 }
