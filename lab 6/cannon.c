@@ -565,6 +565,9 @@ START:;
     if (pressed_key == SDLK_ESCAPE)
       exit(3);
 
+    if (pressed_key == SDLK_r)
+      goto START;
+
     control_digit_amount_in_scoreboard(&stats);
 
     // Increase level when all enemies get shot down.
