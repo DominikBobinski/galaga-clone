@@ -26,6 +26,7 @@
 #define ENEMY_SHOOT_CHANCE 2000 // Higher value lowers the chance of shooting.
 #define MAX_LEVEL 5
 #define LEVEL_ZERO_ENEMIES 3
+#define LEVEL_TRANSITION_TIME 2 // Time spent in between levels, in seconds.
 
 struct Bullet {
   int x;
@@ -463,6 +464,49 @@ void control_digit_amount_in_scoreboard(struct Stats *stats) {
   }
 }
 
+void level_transition(struct Star *stars, struct Stats stats, int ship_position,
+                      int frame_time) {
+  for (int i = 0; i < STAR_AMOUNT; ++i) {
+    stars[i].velocity += 15;
+  }
+
+  time_t start = time(NULL);
+
+  while (1) {
+    time_t now = time(NULL);
+
+    draw_background();
+
+    // Star animation loop.
+    for (int i = 0; i < STAR_AMOUNT; ++i) {
+      draw_star(stars[i].x, stars[i].y);
+      move_star(&stars[i].y, &stars[i].velocity);
+      // Set star y to 0 if it exits the screen
+      if (stars[i].y >= gfx_screenHeight()) {
+        stars[i].y = 0;
+      }
+    }
+
+    draw_stats(stats);
+
+    draw_ship(ship_position, stats.lives_left);
+
+    if (start + LEVEL_TRANSITION_TIME - now != 0) {
+      gfx_textout(gfx_screenWidth() / 2 - 120, 200,
+                  "TRAVELLING TO THE NEXT LOCATION", GREEN);
+    } else {
+      break;
+    }
+
+    SDL_Delay(16.6666 - frame_time);
+    gfx_updateScreen();
+  }
+
+  for (int i = 0; i < STAR_AMOUNT; ++i) {
+    stars[i].velocity -= 15;
+  }
+}
+
 int main() {
   if (gfx_init())
     exit(3);
@@ -474,6 +518,8 @@ int main() {
   struct Enemy_bullet enemy_bullets[MAX_ENEMIES];
   struct Explosion enemy_bullets_explosions[MAX_ENEMIES];
   struct Level levels[MAX_LEVEL];
+
+  time_t frame_time = 0;
 
 START:;
 
@@ -575,11 +621,30 @@ START:;
 
     // Increase level when all enemies get shot down.
     if (levels[stats.current_level].current_enemies == 0) {
-      game_start_time = time(NULL);
+
+      for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
+        enemies[j].visible = false;
+        explosions[j].frames_left = 0;
+        destroy_enemy_bullet(&enemy_bullets[j].is_visible);
+      }
+
+      for (int i = 0; i < MAX_BULLETS; ++i) {
+        destroy_bullet(&bullets[i].visible);
+      }
+
       stats.current_level += 1;
+
+      if (stats.current_level == MAX_LEVEL) {
+        goto END_GAME;
+      }
+
+      level_transition(stars, stats, ship_position, frame_time);
+      stats.current_level += 1;
+      game_start_time = time(NULL);
     }
 
     if (stats.lives_left == 0 || stats.current_level == MAX_LEVEL) {
+    END_GAME:;
       game_over(stats);
       goto START; /* Perhaps dumb? Goes backwards in code to where srand() is
                      ran and variables are being initialized. This is done to
@@ -753,7 +818,7 @@ START:;
     }
 
     time_t frame_end_time = time(NULL);
-    time_t frame_time = frame_start_time - frame_end_time;
+    frame_time = frame_start_time - frame_end_time;
 
     gfx_updateScreen();
     SDL_Delay(16.6666 - frame_time);
