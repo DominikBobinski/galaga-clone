@@ -322,7 +322,8 @@ void generate_star_pattern(int *star_x, float *star_y) {
 
 // Draws a rectangular star at given coordinates.
 void draw_star(int x, float y) {
-  gfx_filledRect(x - 1, y - 1, x + 1, y + 1, WHITE);
+  gfx_filledTriangle(x, y + 1, x - 1, y, x + 1, y, WHITE);
+  gfx_filledTriangle(x, y - 1, x - 1, y, x + 1, y, WHITE);
 }
 
 // Moves the created stars along the Y direction.
