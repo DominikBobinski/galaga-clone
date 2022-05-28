@@ -72,7 +72,7 @@ struct Stats {
 struct Level {
   int max_enemies;
   int current_enemies;
-  int enemy_characteristic;
+  float enemy_characteristic;
 };
 
 // Sets the initial bullet-ship distance and the bullet position.
@@ -132,11 +132,12 @@ void draw_enemy(float x_enemy, float y_enemy, float scale) {
 }
 
 // Move enemy in a sinusoid path.
-void move_enemy(float *x_enemy, float *y_enemy, float enemy_multiplier) {
+void move_enemy(float *x_enemy, float *y_enemy, float enemy_multiplier,
+                float enemy_characteristic) {
   const int y_amplitude = 20;
   const double vertical_displacement = y_amplitude * sin(*x_enemy * 0.02);
   *y_enemy = (AVERAGE_ENEMY_HEIGHT + vertical_displacement) * enemy_multiplier;
-  *x_enemy += ENEMY_VELOCITY + enemy_multiplier * 0.1;
+  *x_enemy += ENEMY_VELOCITY + enemy_multiplier * 0.1 * enemy_characteristic;
 }
 
 // Removes the bullet that hit a enemy.
@@ -558,7 +559,8 @@ START:;
 
       if (enemies[j].visible == true) {
         draw_enemy(enemies[j].x, enemies[j].y, enemy_scales[1]);
-        move_enemy(&enemies[j].x, &enemies[j].y, enemies[j].multiplier);
+        move_enemy(&enemies[j].x, &enemies[j].y, enemies[j].multiplier,
+                   levels[current_level].enemy_characteristic);
 
         if (enemies[j].x > gfx_screenWidth()) {
           enemies[j].x = 0;
@@ -583,7 +585,8 @@ START:;
       if (enemy_bullets[j].is_visible == true) {
         draw_enemy_bullet(enemy_bullets[j].x, enemy_bullets[j].y);
         // moves enemies' bullets
-        enemy_bullets[j].y += enemy_bullets[j].velocity;
+        enemy_bullets[j].y += enemy_bullets[j].velocity +
+                              levels[current_level].enemy_characteristic * 0.6;
       }
     }
 
