@@ -14,9 +14,9 @@
 #define ENEMY_VELOCITY 4
 #define AVERAGE_ENEMY_HEIGHT 80
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
-#define MAX_ENEMIES 5
+#define MAX_ENEMIES 15
 #define MAX_ENEMY_WAIT_TIME 15 // Sets time in seconds until enemy appears.
-#define SHIP_SPEED 5
+#define SHIP_SPEED 10
 #define STAR_AMOUNT 60
 #define SHIP_RELATIVE_Y (gfx_screenHeight() - 50)
 #define MAX_LIVES 5
