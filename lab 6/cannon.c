@@ -519,6 +519,7 @@ START:;
     enemies[j].y = AVERAGE_ENEMY_HEIGHT;
     enemies[j].multiplier = rand() % 5 + 1 + j * 0.1 * pow(-1, j);
     enemies[j].time_to_appear = rand() % MAX_ENEMY_WAIT_TIME;
+    enemies[j].visible = false;
 
     if (rand() % 2 == 0) {
       enemies[j].x = 0;
