@@ -488,7 +488,7 @@ START:;
   for (int i = 0; i < MAX_ENEMIES; ++i) {
     enemies[i].x = 0;
     enemies[i].y = AVERAGE_ENEMY_HEIGHT;
-    enemies[i].multiplier = rand() % 5 + 1;
+    enemies[i].multiplier = rand() % 5 + 1 + i * 0.1 * pow(-1, i);
     enemies[i].time_to_appear = rand() % MAX_ENEMY_WAIT_TIME;
 
     enemy_bullets[i].y = 0;
