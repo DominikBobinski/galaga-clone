@@ -68,6 +68,7 @@ struct Stats {
   int bullet_counter;
   int enemies_hit_counter;
   int current_level;
+  int lives_left;
 };
 
 struct Level {
@@ -477,8 +478,10 @@ START:;
     levels[l].enemy_characteristic = l + 1;
   }
 
-  struct Stats stats = {
-      .bullet_counter = 0, .enemies_hit_counter = 0, .current_level = 0};
+  struct Stats stats = {.bullet_counter = 0,
+                        .enemies_hit_counter = 0,
+                        .current_level = 0,
+                        .lives_left = STARTING_LIVES};
 
   srand(time(0));
 
@@ -528,8 +531,6 @@ START:;
 
   bool should_shoot = false;
 
-  int lives_left = STARTING_LIVES;
-
   /* Scales that can be used for enemy sizes. Have to be careful as they aren't
      connectd in any way to the MIN_DISTANCE_FOR_HIT. */
   float enemy_scales[4] = {1, 1.5, 2, 2.5};
@@ -553,7 +554,7 @@ START:;
       stats.current_level += 1;
     }
 
-    if (lives_left == 0 || stats.current_level == MAX_LEVEL) {
+    if (stats.lives_left == 0 || stats.current_level == MAX_LEVEL) {
       game_over(stats);
       goto START; /* Perhaps dumb? Goes backwards in code to where srand() is
                      ran and variables are being initialized. This is done to
@@ -576,13 +577,13 @@ START:;
     // Give the player +1 life every 10 hit enemies.
     if (stats.enemies_hit_counter % HITS_TO_GAIN_LIFE == 0 &&
         stats.enemies_hit_counter != 0 && counter_control == 1 &&
-        lives_left < MAX_LIVES) {
-      lives_left += 1;
+        stats.lives_left < MAX_LIVES) {
+      stats.lives_left += 1;
       counter_control = 0;
     }
 
     draw_stats(stats);
-    draw_ship(ship_position, lives_left);
+    draw_ship(ship_position, stats.lives_left);
 
     // Fetches the time at which the current frame is created.
     time_t current_time = time(NULL);
@@ -717,7 +718,7 @@ START:;
             player_is_hit(enemy_bullets[j].x, enemy_bullets[j].y,
                           ship_position) == true) {
 
-          lives_left -= 1;
+          stats.lives_left -= 1;
 
           enemy_bullets_explosions[j].x = enemy_bullets[j].x;
           enemy_bullets_explosions[j].y = enemy_bullets[j].y;
