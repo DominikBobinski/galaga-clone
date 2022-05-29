@@ -358,7 +358,7 @@ bool player_is_hit(int bullet_x, int bullet_y, int ship_position) {
 void destroy_enemy_bullet(bool *bullet) { *bullet = false; }
 
 // Shows the "game over" screen and allows to either exit or play again.
-void game_over(struct Stats stats) {
+void game_over(struct Stats stats, bool won) {
   while (1) {
     int key_pressed = gfx_pollkey();
 
@@ -372,7 +372,7 @@ void game_over(struct Stats stats) {
 
     draw_background();
 
-    if (stats.current_level == MAX_LEVEL) {
+    if (won == true) {
       frame_color = GREEN;
       gfx_textout(gfx_screenWidth() / 2 - 32, gfx_screenHeight() / 2 - 100,
                   you_win, frame_color);
@@ -623,6 +623,10 @@ START:;
 
     // Increase level when all enemies get shot down.
     if (levels[stats.current_level].current_enemies == 0) {
+      if (stats.current_level == MAX_LEVEL - 1) {
+        game_over(stats, true);
+        goto START;
+      }
 
       for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
         enemies[j].visible = false;
@@ -635,18 +639,12 @@ START:;
       }
 
       stats.current_level += 1;
-
-      if (stats.current_level == MAX_LEVEL) {
-        goto END_GAME;
-      } else {
-        level_transition(stars, stats, ship_position, frame_time);
-        game_start_time = time(NULL);
-      }
+      level_transition(stars, stats, ship_position, frame_time);
+      game_start_time = time(NULL);
     }
 
     if (stats.lives_left == 0 || stats.current_level == MAX_LEVEL) {
-    END_GAME:;
-      game_over(stats);
+      game_over(stats, false);
       goto START; /* Perhaps dumb? Goes backwards in code to where srand() is
                      ran and variables are being initialized. This is done to
                      reset all progress in the game in case the player chooses
