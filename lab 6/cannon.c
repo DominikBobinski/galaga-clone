@@ -552,6 +552,7 @@ START:;
     bullets[i].y = 0;
     bullets[i].fire_position = gfx_screenWidth() / 2;
     bullets[i].visible = false;
+    bullets[i].distance = 0;
   }
 
   /* Generates random coordinates for the given STAR_AMOUNT and gives each star
