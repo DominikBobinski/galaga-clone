@@ -281,8 +281,8 @@ bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
 
 // Draws the score table.
 void draw_stats(struct Stats stats) {
-  const char bullets_shot_text[14] = "Bullets shot:";
-  const char enemies_hit_text[13] = "Enemies hit:";
+  const char bullets_shot_text[] = "Bullets shot:";
+  const char enemies_hit_text[] = "Enemies hit:";
   char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
   char enemies_hit_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
 
@@ -298,7 +298,7 @@ void draw_stats(struct Stats stats) {
               SDL_itoa(stats.enemies_hit_counter, enemies_hit_buffer, 10),
               WHITE);
 
-  const char level[6] = "Level:";
+  const char level[] = "Level:";
   char current_level_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
   gfx_textout(gfx_screenWidth() - 140, gfx_screenHeight() - 14, level, WHITE);
   gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 14,
@@ -364,11 +364,11 @@ void game_over(struct Stats stats, bool won) {
 
     int frame_color = 0;
 
-    const char game_over[10] = "GAME OVER";
-    const char you_win[9] = "YOU WIN!";
-    const char press_esc[19] = "PRESS ESC TO QUIT";
-    const char press_space[26] = "PRESS SPACE TO PLAY AGAIN";
-    const char final_score[13] = "Final Score:";
+    const char game_over[] = "GAME OVER";
+    const char you_win[] = "YOU WIN!";
+    const char press_esc[] = "PRESS ESC TO QUIT";
+    const char press_space[] = "PRESS SPACE TO PLAY AGAIN";
+    const char final_score[] = "Final Score:";
 
     draw_background();
 
@@ -404,8 +404,8 @@ void game_over(struct Stats stats, bool won) {
     gfx_textout(gfx_screenWidth() / 2 - 68, gfx_screenHeight() / 2 + 150,
                 press_esc, WHITE);
 
-    const char bullets_shot_text[14] = "Bullets shot:";
-    const char enemies_hit_text[13] = "Enemies hit:";
+    const char bullets_shot_text[] = "Bullets shot:";
+    const char enemies_hit_text[] = "Enemies hit:";
     char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
     char enemies_hit_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
 
@@ -419,7 +419,7 @@ void game_over(struct Stats stats, bool won) {
                 SDL_itoa(stats.enemies_hit_counter, enemies_hit_buffer, 10),
                 WHITE);
 
-    const char level[6] = "Level:";
+    const char level[] = "Level:";
     char current_level_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
     gfx_textout(gfx_screenWidth() / 2 - 63, gfx_screenHeight() / 2 + 40, level,
                 WHITE);
