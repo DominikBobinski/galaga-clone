@@ -786,7 +786,8 @@ START:;
     for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
       for (int i = 0; i < MAX_BULLETS; ++i) {
         if (bullets[i].visible == true &&
-            is_hit(enemies[j].x, enemies[j].y, bullets[i].x, bullets[i].y)) {
+            is_hit(enemies[j].x, enemies[j].y, bullets[i].x, bullets[i].y) &&
+            enemies[j].visible == true) {
 
           stats.enemies_hit_counter += 1;
           counter_control = 1;
