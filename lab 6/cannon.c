@@ -663,6 +663,14 @@ START:;
 
       for (int j = 0; j < levels[stats.current_level].max_enemies; ++j) {
         enemies[j].visible = false;
+        if (rand() % 2 == 0) {
+          enemies[j].x = 0;
+          enemies[j].direction = 1;
+        } else {
+          enemies[j].x = gfx_screenWidth();
+          enemies[j].direction = -1;
+        }
+        enemies[j].time_to_appear = rand() % MAX_ENEMY_WAIT_TIME;
         explosions[j].frames_left = 0;
         destroy_enemy_bullet(&enemy_bullets[j].is_visible);
       }
