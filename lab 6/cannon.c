@@ -286,12 +286,13 @@ void draw_stats(struct Stats stats) {
   char *bullet_count_buffer =
       malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
   if (bullet_count_buffer == NULL) {
-    free(bullet_count_buffer);
+    return;
   }
   char *enemies_hit_buffer =
       malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
   if (enemies_hit_buffer == NULL) {
-    free(enemies_hit_buffer);
+    free(bullet_count_buffer);
+    return;
   }
 
   gfx_rect(gfx_screenWidth() - 146, gfx_screenHeight() - 53, gfx_screenWidth(),
@@ -310,7 +311,9 @@ void draw_stats(struct Stats stats) {
   char *current_level_buffer =
       malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
   if (current_level_buffer == NULL) {
-    free(current_level_buffer);
+    free(bullet_count_buffer);
+    free(enemies_hit_buffer);
+    return;
   }
   gfx_textout(gfx_screenWidth() - 140, gfx_screenHeight() - 14, level, WHITE);
   gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 14,
@@ -388,18 +391,21 @@ void game_over(struct Stats stats, bool won) {
   char *bullet_count_buffer =
       malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
   if (bullet_count_buffer == NULL) {
-    free(bullet_count_buffer);
+    return;
   }
   char *enemies_hit_buffer =
       malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
   if (enemies_hit_buffer == NULL) {
-    free(enemies_hit_buffer);
+    free(bullet_count_buffer);
+    return;
   }
   const char level[] = "Level:";
   char *current_level_buffer =
       malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
   if (current_level_buffer == NULL) {
-    free(current_level_buffer);
+    free(bullet_count_buffer);
+    free(enemies_hit_buffer);
+    return;
   }
 
   while (1) {
