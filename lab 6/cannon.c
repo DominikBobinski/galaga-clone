@@ -720,7 +720,7 @@ START:;
                    levels[stats.current_level].enemy_characteristic,
                    enemies[j].direction);
 
-        if (enemies[j].x > gfx_screenWidth() || enemies[j].x - 1 < 0) {
+        if (enemies[j].x > gfx_screenWidth() || enemies[j].x < 0) {
           enemies[j].direction *= -1;
         }
       }
