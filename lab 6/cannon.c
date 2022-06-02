@@ -283,8 +283,16 @@ bool is_bullet_out_of_bounds(int bullet_x, int bullet_y) {
 void draw_stats(struct Stats stats) {
   const char bullets_shot_text[] = "Bullets shot:";
   const char enemies_hit_text[] = "Enemies hit:";
-  char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
-  char enemies_hit_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
+  char *bullet_count_buffer =
+      malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
+  if (bullet_count_buffer == NULL) {
+    free(bullet_count_buffer);
+  }
+  char *enemies_hit_buffer =
+      malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
+  if (enemies_hit_buffer == NULL) {
+    free(enemies_hit_buffer);
+  }
 
   gfx_rect(gfx_screenWidth() - 146, gfx_screenHeight() - 53, gfx_screenWidth(),
            gfx_screenHeight(), WHITE);
@@ -299,11 +307,19 @@ void draw_stats(struct Stats stats) {
               WHITE);
 
   const char level[] = "Level:";
-  char current_level_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
+  char *current_level_buffer =
+      malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
+  if (current_level_buffer == NULL) {
+    free(current_level_buffer);
+  }
   gfx_textout(gfx_screenWidth() - 140, gfx_screenHeight() - 14, level, WHITE);
   gfx_textout(gfx_screenWidth() - 30, gfx_screenHeight() - 14,
               SDL_itoa(stats.current_level + 1, current_level_buffer, 10),
               WHITE);
+
+  free(bullet_count_buffer);
+  free(enemies_hit_buffer);
+  free(current_level_buffer);
 }
 
 // Limits the ships movement to the screen width.
@@ -359,16 +375,35 @@ void destroy_enemy_bullet(bool *bullet) { *bullet = false; }
 
 // Shows the "game over" screen and allows to either exit or play again.
 void game_over(struct Stats stats, bool won) {
+  int frame_color = 0;
+
+  const char game_over[] = "GAME OVER";
+  const char you_win[] = "YOU WIN!";
+  const char press_esc[] = "PRESS ESC TO QUIT";
+  const char press_space[] = "PRESS SPACE TO PLAY AGAIN";
+  const char final_score[] = "Final Score:";
+
+  const char bullets_shot_text[] = "Bullets shot:";
+  const char enemies_hit_text[] = "Enemies hit:";
+  char *bullet_count_buffer =
+      malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
+  if (bullet_count_buffer == NULL) {
+    free(bullet_count_buffer);
+  }
+  char *enemies_hit_buffer =
+      malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
+  if (enemies_hit_buffer == NULL) {
+    free(enemies_hit_buffer);
+  }
+  const char level[] = "Level:";
+  char *current_level_buffer =
+      malloc(sizeof(char) * (SCOREBOARD_COUNTER_MAX_DIGITS + 1));
+  if (current_level_buffer == NULL) {
+    free(current_level_buffer);
+  }
+
   while (1) {
     int key_pressed = gfx_pollkey();
-
-    int frame_color = 0;
-
-    const char game_over[] = "GAME OVER";
-    const char you_win[] = "YOU WIN!";
-    const char press_esc[] = "PRESS ESC TO QUIT";
-    const char press_space[] = "PRESS SPACE TO PLAY AGAIN";
-    const char final_score[] = "Final Score:";
 
     draw_background();
 
@@ -404,11 +439,6 @@ void game_over(struct Stats stats, bool won) {
     gfx_textout(gfx_screenWidth() / 2 - 68, gfx_screenHeight() / 2 + 150,
                 press_esc, WHITE);
 
-    const char bullets_shot_text[] = "Bullets shot:";
-    const char enemies_hit_text[] = "Enemies hit:";
-    char bullet_count_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
-    char enemies_hit_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
-
     gfx_textout(gfx_screenWidth() / 2 - 63, gfx_screenHeight() / 2,
                 bullets_shot_text, WHITE);
     gfx_textout(gfx_screenWidth() / 2 - 63, gfx_screenHeight() / 2 + 20,
@@ -419,8 +449,6 @@ void game_over(struct Stats stats, bool won) {
                 SDL_itoa(stats.enemies_hit_counter, enemies_hit_buffer, 10),
                 WHITE);
 
-    const char level[] = "Level:";
-    char current_level_buffer[SCOREBOARD_COUNTER_MAX_DIGITS + 1];
     gfx_textout(gfx_screenWidth() / 2 - 63, gfx_screenHeight() / 2 + 40, level,
                 WHITE);
     gfx_textout(gfx_screenWidth() / 2 + 45, gfx_screenHeight() / 2 + 40,
@@ -437,6 +465,9 @@ void game_over(struct Stats stats, bool won) {
     gfx_updateScreen();
     SDL_Delay(10);
   }
+  free(bullet_count_buffer);
+  free(enemies_hit_buffer);
+  free(current_level_buffer);
 }
 
 // Calculates the maximum number avaible given the amount of digits.
@@ -448,7 +479,8 @@ int max_num_from_digits(int digits) {
   return max_num;
 }
 
-// Sets the bullet or enemies hit counters to 0 if they exceed max digit limits.
+// Sets the bullet or enemies hit counters to 0 if they exceed max digit
+// limits.
 void control_digit_amount_in_scoreboard(struct Stats *stats) {
   if (stats->bullet_counter >=
       max_num_from_digits(SCOREBOARD_COUNTER_MAX_DIGITS)) {
