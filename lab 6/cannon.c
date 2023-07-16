@@ -16,7 +16,7 @@
 #define SCOREBOARD_COUNTER_MAX_DIGITS 3
 #define MAX_ENEMIES 15
 #define MAX_ENEMY_WAIT_TIME 4 // Sets time in seconds until enemy appears.
-#define SHIP_SPEED 18
+#define SHIP_SPEED 15
 #define STAR_AMOUNT 60
 #define SHIP_RELATIVE_Y (gfx_screenHeight() - 50)
 #define MAX_LIVES 5
@@ -565,7 +565,7 @@ START:;
 
   srand(time(0));
 
-  // Fetches the time at which the game starts.
+  // Fetches the time at which the game/level starts.
   time_t game_start_time = time(NULL);
 
   /* Initializes the amount of enemies per level and their characteristic
@@ -710,7 +710,7 @@ START:;
       }
     }
 
-    // Give the player +1 life every 10 hit enemies.
+    // Give the player +1 life every HITS_TO_GAIN_LIFE hit enemies.
     if (stats.enemies_hit_counter % HITS_TO_GAIN_LIFE == 0 &&
         stats.enemies_hit_counter != 0 && counter_control == 1 &&
         stats.lives_left < MAX_LIVES) {
